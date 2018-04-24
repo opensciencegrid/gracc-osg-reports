@@ -6,7 +6,6 @@ import argparse
 
 from elasticsearch_dsl import Search
 
-# from . import Reporter, runerror, get_configfile, get_template
 from gracc_reporting import ReportUtils, TimeUtils
 
 
@@ -14,18 +13,7 @@ logfile = 'osgflockingreport.log'
 default_templatefile = 'template_flocking.html'
 MAXINT = 2**31 - 1
 
-
-# Helper functions
-
-# @Reporter.init_reporter_parser
-# def parse_report_args(parser):
-#     """
-#     Don't need to add any options to Reporter.parse_opts
-#     """
-#     parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
-
-#     pass
-
+# TODO: Fix docstrings
 
 class FlockingReport(ReportUtils.Reporter):
     """Class to hold information for and to run OSG Flocking report
@@ -38,18 +26,8 @@ class FlockingReport(ReportUtils.Reporter):
     :param bool is_test: Whether or not this is a test run.
     :param bool no_email: If true, don't actually send the email
     """
-    # def __init__(self, config, start, end, template=False, verbose=False,
-    #              is_test=False, no_email=False, ov_logfile=None):
     def __init__(self, config_file, start, end, **kwargs):
         report = 'Flocking'
-
-        # if ov_logfile:
-        #     rlogfile = ov_logfile
-        #     logfile_override = True
-        # else:
-        #     rlogfile = logfile
-        #     logfile_override = False
-
 
         super(FlockingReport, self).__init__(config_file=config_file, 
                                              start=start, 
@@ -59,9 +37,6 @@ class FlockingReport(ReportUtils.Reporter):
         self.title = "OSG Flocking: Usage of OSG Sites for {0} - {1}".format(
             start, end)
 
-        # self.verbose = verbose
-        # self.no_email = no_email
-        # self.is_test = is_test
         self.header = ["VOName", "SiteName", "ProbeName", "ProjectName",
                        "Wall Hours"]
 
