@@ -9,8 +9,7 @@ from elasticsearch_dsl import Search
 from gracc_reporting import ReportUtils, TimeUtils
 
 
-logfile = 'osgflockingreport.log'
-default_templatefile = 'template_flocking.html'
+LOGFILE = 'osgflockingreport.log'
 MAXINT = 2**31 - 1
 
 # TODO: Fix docstrings
@@ -129,14 +128,8 @@ class FlockingReport(ReportUtils.Reporter):
 
 
 def main():
-    # args = parse_opts()
     args = ReportUtils.parse_opts().parse_args()
-    logfile_fname = args.logfile if args.logfile is not None else logfile
-
-    # Set up the configuration
-    # config = get_configfile(override=args.config)
-
-    # templatefile = get_template(override=args.template, deffile=default_templatefile)
+    logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
     try:
         # Create an FlockingReport object, and run the report
