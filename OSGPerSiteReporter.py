@@ -233,6 +233,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
                 monthrange(self.start_time),
                 prev_month_shift(self.start_time)):
             results = self.run_query()
+            exit(0)
             self._parse_results(results, consumer)
             self.current = False
 
@@ -386,8 +387,12 @@ def main():
 
     if args.end is not None:
         try:
-            assert monthrange(TimeUtils.parse_datetime(args.start)) ==\
-                monthrange(TimeUtils.parse_datetime(args.end))
+            assert [d.date() for d in 
+                monthrange(TimeUtils.parse_datetime(args.start))] ==\
+                [d.date() for d in 
+                monthrange(TimeUtils.parse_datetime(args.end))]
+            # assert monthrange(TimeUtils.parse_datetime(args.start)) ==\
+            #     monthrange(TimeUtils.parse_datetime(args.end))
         except AssertionError:
             raise ValueError("Currently, the OSG Per Site Reporter only supports running over"\
                 " a month time range (e.g. 2017-03-01 to 2017-03-31).  Please"\
