@@ -211,7 +211,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
 
         s = Search(using=self.client, index=self.indexpattern) \
             .filter("range", EndTime={"gte": starttimeq, "lt": endtimeq})\
-            .filter('term', ResourceType="Batch")
+            .filter('term', ResourceType="Batch")[0:0]
 
         # Note:  Using ?: operator in painless language to coalesce the
         # 'OIM_Site' and 'SiteName' fields.
@@ -220,6 +220,9 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
                     script={"inline": "doc['OIM_Site'].value ?: doc['SiteName'].value", "lang": "painless"},
                     size=2**31-1) \
             .metric('sum_core_hours', 'sum', field='CoreHours')
+
+        print s.to_dict()
+        exit()
 
         return s
 
@@ -233,7 +236,6 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
                 monthrange(self.start_time),
                 prev_month_shift(self.start_time)):
             results = self.run_query()
-            exit(0)
             self._parse_results(results, consumer)
             self.current = False
 
