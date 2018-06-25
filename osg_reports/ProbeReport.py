@@ -630,7 +630,7 @@ class ProbeReport(ReportUtils.Reporter):
 
     def send_report(self):
         """Send our emails"""
-        if self.test_no_email(self.email_info['to']['email']):
+        if self.check_no_email(self.email_info['to']['email']):
             self.logger.info("Resource name: {0}\tProbe Name: {1}"
                              .format(self.resource, self.probe))
 
