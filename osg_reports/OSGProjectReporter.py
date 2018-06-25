@@ -245,7 +245,7 @@ def main():
                         verbose=args.verbose,
                         is_test=args.is_test,
                         no_email=args.no_email,
-                        logfile=args.logfile,
+                        logfile=logfile_fname,
                         template=args.template)
         r.run_report()
         r.logger.info("OSG Project Report executed successfully")

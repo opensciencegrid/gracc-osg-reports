@@ -2,17 +2,20 @@ import sys
 import traceback
 import datetime
 import copy
+import argparse
 from dateutil.relativedelta import *
 
 from elasticsearch_dsl import Search
 
-from . import Reporter, runerror, get_configfile, get_template, coroutine
-from . import TextUtils, NiceNum
+from gracc_reporting import ReportUtils, TimeUtils
+from gracc_reporting.NiceNum import niceNum
+#from . import Reporter, runerror, get_configfile, get_template, coroutine
+#from . import TextUtils, NiceNum
 from NameCorrection import NameCorrection
 
 
-logfile = 'topoppusage.log'
-default_templatefile = 'template_topoppusage.html'
+LOGFILE = 'topoppusage.log'
+# default_templatefile = 'template_topoppusage.html'
 MAXINT = 2**31-1
 facilities = {}
 
@@ -45,8 +48,9 @@ def get_time_range(start=None, end=None, months=None):
     return (start, end), (pri_start, pri_end)
 
 
-@Reporter.init_reporter_parser
-def parse_opts(parser):
+# @Reporter.init_reporter_parser
+# def parse_opts(parser):
+def parse_report_args():
     """
     Specific argument parser for this report.  The decorator initializes the
     argparse.ArgumentParser object, calls this function on that object to
@@ -56,12 +60,14 @@ def parse_opts(parser):
     :return: None
     """
     # Report-specific args
+    parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
     parser.add_argument("-m", "--months", dest="months",
                         help="Number of months to run report for",
                         default=None, type=int)
     parser.add_argument("-N", "--numrank", dest="numrank",
                         help="Number of Facilities to rank",
                         default=None, type=int)
+    return parser.parse_args()
 
 
 class Facility(object):
@@ -128,7 +134,7 @@ class Facility(object):
         return
 
 
-class TopOppUsageByFacility(Reporter):
+class TopOppUsageByFacility(ReportUtils.Reporter):
     """
     Class to hold information and generate Top Opp Usage by Facility report
 
@@ -143,21 +149,29 @@ class TopOppUsageByFacility(Reporter):
     :param int months: Number of months prior to today to set start of report
     range
     """
-    def __init__(self, config, start=None, end=None, template=None,
-                 is_test=False, no_email=False, verbose=False, numrank=10,
-                 months=None, ov_logfile=None):
+    def __init__(self, config_file, start=None, end=None, numrank=10, 
+                 months=None, **kwargs):
         report = 'news'
 
-        logfile_fname = ov_logfile if ov_logfile is not None else logfile
-        logfile_override = True if ov_logfile is not None else False
+#         logfile_fname = ov_logfile if ov_logfile is not None else logfile
+#         logfile_override = True if ov_logfile is not None else False
 
-        super(TopOppUsageByFacility, self).__init__(report, config, start, end,
-                                                    verbose=verbose, no_email=no_email,
-                                                    is_test=is_test, logfile=logfile_fname,
-                                                    logfile_override=logfile_override)
+        super(TopOppUsageByFacility, self).__init__(report_type=report,
+                                                    config_file=config_file,
+                                                    start=start,
+                                                    end=end,
+                                                    **kwargs)
+
+#
+#
+#
+#        super(TopOppUsageByFacility, self).__init__(report, config, start, end,
+#                                                    verbose=verbose, no_email=no_email,
+#                                                    is_test=is_test, logfile=logfile_fname,
+#                                                    logfile_override=logfile_override)
 
         self.numrank = numrank
-        self.template = template
+    #     self.template = template
         self.text = ''
         self.table = ''
         self.daterange = get_time_range(self.start_time, self.end_time, months)
@@ -301,7 +315,7 @@ class TopOppUsageByFacility(Reporter):
 
         return
 
-    @coroutine
+    @ReportUtils.coroutine
     def _parse_to_facilities(self):
         """
         Coroutine that parses raw data dicts, creates the Facility class
@@ -352,10 +366,10 @@ class TopOppUsageByFacility(Reporter):
         summarytext = "TOTAL WALL HOURS FOR THE OSG OPEN FACILITY: {0}<br/>" \
                       "PRIOR PERIOD HOURS: {1}<br/>" \
                       "TOP {2} SITES WALL HOURS: {3}".format(
-            NiceNum.niceNum(tothrs),
-            NiceNum.niceNum(prihrs),
+            niceNum(tothrs),
+            niceNum(prihrs),
             self.numrank,
-            NiceNum.niceNum(rankhrs)
+            niceNum(rankhrs)
         )
 
         htmlheader = '<th>' + '</th><th>'.join(header) + '</th>'
@@ -374,7 +388,7 @@ class TopOppUsageByFacility(Reporter):
         """HTML generator to wrap a table cell with alignment"""
         return '<td align="{0}">{1}</td>'.format(align, info)
 
-    @coroutine
+    @ReportUtils.coroutine
     def _total_line_gen(self):
         """
         Coroutine to generate the Facility-level lines from the Facility class
@@ -390,9 +404,9 @@ class TopOppUsageByFacility(Reporter):
                 self.tdalign('<br/>'.join(fclass.rg_list),'left'),
                 self.tdalign('<br/>'.join(fclass.res_list), 'left'),
                 self.tdalign(rank, 'right'),
-                self.tdalign(NiceNum.niceNum(fclass.totalhours), 'right'),
+                self.tdalign(niceNum(fclass.totalhours), 'right'),
                 self.tdalign(fclass.oldrank, 'right'),
-                self.tdalign(NiceNum.niceNum(fclass.oldtotalhours), 'right')
+                self.tdalign(niceNum(fclass.oldtotalhours), 'right')
                 )
 
             self.table += line
@@ -400,7 +414,7 @@ class TopOppUsageByFacility(Reporter):
             if len(fclass.res_list) > 1:    # If there's more than one resource
                 detailler.send(fclass)
 
-    @coroutine
+    @ReportUtils.coroutine
     def _detail_line_gen(self):
         """
         Coroutine to generate the Resource-level lines for the facilities
@@ -418,12 +432,12 @@ class TopOppUsageByFacility(Reporter):
                     self.tdalign(entry['OIM_ResourceGroup'], 'left'),
                     self.tdalign(entry['OIM_Resource'], 'left'),
                     '<td></td>',
-                    self.tdalign(NiceNum.niceNum(entry['CoreHours']), 'right'),
+                    self.tdalign(niceNum(entry['CoreHours']), 'right'),
                     '<td></td>'
                 )
 
                 try:
-                    oldhrs = NiceNum.niceNum(oldres_dict[entry['OIM_Resource']])
+                    oldhrs = niceNum(oldres_dict[entry['OIM_Resource']])
                 except KeyError:    # Resource not in old entry dict
                     oldhrs = 'Unknown'
                 finally:
@@ -434,26 +448,28 @@ class TopOppUsageByFacility(Reporter):
 
 
 def main():
-    args = parse_opts()
+    # args = parse_opts()
+    args = parse_report_args()
+    logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
     # Set up the configuration
-    config = get_configfile(override=args.config)
+    # config = get_configfile(override=args.config)
 
-    templatefile = get_template(override=args.template, deffile=default_templatefile)
+    # templatefile = get_template(override=args.template, deffile=default_templatefile)
 
     try:
 
         # Create a report object, create a report for the VO, and send it
-        r = TopOppUsageByFacility(config,
+        r = TopOppUsageByFacility(config_file=args.config,
                                   start=args.start,
                                   end=args.end,
-                                  template=templatefile,
+                                  template=args.templatefile,
                                   months=args.months,
                                   is_test=args.is_test,
                                   no_email=args.no_email,
                                   verbose=args.verbose,
                                   numrank=args.numrank,
-                                  ov_logfile=args.logfile)
+                                  logfile=args.logfile)
         r.run_report()
         print "Top Opportunistic Usage per Facility Report execution successful"
 
@@ -461,7 +477,7 @@ def main():
         errstring = '{0}: Error running Top Opportunistic Usage Report. ' \
                     '{1}'.format(datetime.datetime.now(),
                                  traceback.format_exc())
-        runerror(config, e, errstring, logfile)
+        ReportUtils.runerror(args.config, e, errstring, args.logfile)
         sys.exit(1)
 
 
