@@ -463,13 +463,13 @@ def main():
         r = TopOppUsageByFacility(config_file=args.config,
                                   start=args.start,
                                   end=args.end,
-                                  template=args.templatefile,
+                                  template=args.template,
                                   months=args.months,
                                   is_test=args.is_test,
                                   no_email=args.no_email,
                                   verbose=args.verbose,
                                   numrank=args.numrank,
-                                  logfile=args.logfile)
+                                  logfile=logfile_fname)
         r.run_report()
         print "Top Opportunistic Usage per Facility Report execution successful"
 
@@ -477,7 +477,7 @@ def main():
         errstring = '{0}: Error running Top Opportunistic Usage Report. ' \
                     '{1}'.format(datetime.datetime.now(),
                                  traceback.format_exc())
-        ReportUtils.runerror(args.config, e, errstring, args.logfile)
+        ReportUtils.runerror(args.config, e, errstring, logfile_fname)
         sys.exit(1)
 
 
