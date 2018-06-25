@@ -269,7 +269,7 @@ class MissingProjectReport(ReportUtils.Reporter):
         else:
             fname = self.fname
 
-        if self.test_no_email(self.email_info['to']['email']):
+        if self.check_no_email(self.email_info['to']['email']):
             return
 
         try:
