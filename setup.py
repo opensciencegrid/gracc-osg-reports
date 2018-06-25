@@ -16,7 +16,7 @@ setup(name='osg-reports',
       author='Shreyas Bhat',
       url='https://github.com/opensciencegrid/gracc-reporting',
       packages=['osg_reports'],
-      install_requires=['gracc_reporting>=2.0', 'elasticsearch_dsl==5.4.0', 'psycopg2',],
+      install_requires=['gracc_reporting>=2.0', 'elasticsearch_dsl==5.4.0', 'psycopg2', 'requests',],
       entry_points={
           'console_scripts': [
               'osgflockingreport = osg_reports.OSGFlockingReporter:main',
