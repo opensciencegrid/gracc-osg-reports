@@ -198,7 +198,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
         return
 
     def query(self):
-        """Method to query Elasticsearch cluster for Flocking Report
+        """Method to query Elasticsearch cluster for OSG Per Site Report
         information
 
         :return elasticsearch_dsl.Search: Search object containing ES query
@@ -220,9 +220,6 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
                     script={"inline": "doc['OIM_Site'].value ?: doc['SiteName'].value", "lang": "painless"},
                     size=2**31-1) \
             .metric('sum_core_hours', 'sum', field='CoreHours')
-
-        print s.to_dict()
-        exit()
 
         return s
 
