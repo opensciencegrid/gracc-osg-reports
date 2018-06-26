@@ -12,18 +12,13 @@ from gracc_reporting import ReportUtils, TimeUtils
 LOGFILE = 'osgflockingreport.log'
 MAXINT = 2**31 - 1
 
-# TODO: Fix docstrings
 
 class FlockingReport(ReportUtils.Reporter):
     """Class to hold information for and to run OSG Flocking report
 
-    :param str config: Report Configuration filename
+    :param str config_file: Report Configuration filename
     :param str start: Start time of report range
     :param str end: End time of report range
-    :param str template: Filename of HTML template to generate report
-    :param bool verbose: Verbose flag
-    :param bool is_test: Whether or not this is a test run.
-    :param bool no_email: If true, don't actually send the email
     """
     def __init__(self, config_file, start, end, **kwargs):
         report = 'Flocking'

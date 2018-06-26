@@ -4,18 +4,16 @@ import ast
 import os
 import re
 import smtplib
+import traceback
+import sys
+import logging
 import email.utils
 from email.mime.text import MIMEText
 import datetime
 import dateutil
-import logging
-import traceback
-import sys
-import argparse
 
 from elasticsearch_dsl import Search, Q
 
-# from . import Reporter, runerror, get_configfile
 from gracc_reporting import ReportUtils
 
 
@@ -23,26 +21,12 @@ LOGFILE = 'probereport.log'
 TODAY = datetime.datetime.now()
 
 
-# TODO: fix docstrings
-
-# @Reporter.init_reporter_parser
-# def parse_opts(parser):
-#     """
-#     Don't need to add any options to Reporter.parse_opts
-#     """
-#     pass
-
-# def parse_report_args():
-#     parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
-
-
-
 class OIMInfo(object):
     """Class to hold and operate on OIM information
 
     :param bool verbose: Verbose flag
     :param str config: Configuration file
-    :param str ov_logfile: Path to logfile override
+    :param str logfile: Path to logfile override
     """
     # Default OIM URLs
     oim_url = {'rg': 'http://myosg.grid.iu.edu/rgsummary/xml?summary_attrs_showhierarchy=on&summary_attrs_showwlcg=on&summary_attrs_showservice=on&summary_attrs_showfqdn=on&gip_status_attrs_showtestresults=on&downtime_attrs_showpast=&account_type=cumulative_hours&ce_account_type=gip_vo&se_account_type=vo_transfer_volume&bdiitree_type=total_jobs&bdii_object=service&bdii_server=is-osg&all_resources=on&facility_sel%5B%5D=10009&gridtype=on&gridtype_1=on&service=on&service_sel%5B%5D=1&active=on&active_value=1&disable=on&disable_value=0&has_wlcg=on',
@@ -53,23 +37,20 @@ class OIMInfo(object):
         self.config = ReportUtils.Reporter._parse_config(config)
         self.verbose = verbose
 
-        # logfile_fname = ov_logfile if ov_logfile is not None else logfile
-        # logfile_override = True if ov_logfile is not None else False
-
         self.logfile = logfile if logfile is not None\
             else self.get_logfile_path()
 
-        # self.logfile = self.get_logfile_path(logfile_fname,
-        #                                      override=logfile_override)
         self.logger = self.setupgenLogger("ProbeReport-OIM")
         self.root = None
         self.resourcedict = {}
 
         self.xml_file = self.get_file_from_OIM(tag='rg')
-        if self.xml_file:
+
+        try:
+            assert self.xml_file is not None
             self.rgparse_xml()
             self.logger.info('Successfully parsed OIM file')
-        else:
+        except AssertionError:
             raise
 
     def setupgenLogger(self, reportname):
@@ -161,67 +142,6 @@ class OIMInfo(object):
             # If none of the prefixes work for some reason, write to current working dir
             filepath = os.path.join(os.getcwd(), filename)
         return filepath
-
-    # def get_logfile_path(self, fn, override=False):
-    #     """
-    #     Gets log file location.  First tries user override, then tries config 
-    #     file, then some standard locations
-
-    #     :param str fn: Filename of logfile
-    #     :param bool override: Override this method by feeding in a logfile path
-    #     :return str: Path to logfile where we have permission to write
-    #     """
-
-    #     if override:
-    #         print "Writing log to {0}".format(fn)
-    #         return fn
-
-    #     try_locations = ['/var/log', os.path.expanduser('~'), '/tmp']
-
-    #     try:
-    #         configdir = self.config['default_logdir']
-    #         if configdir in try_locations:
-    #             try_locations.remove(configdir)
-    #         try_locations.insert(0, configdir)
-    #     except KeyError:    # No entry in configfile
-    #         pass
-
-    #     d = 'gracc-reporting'
-
-    #     for prefix in try_locations:
-    #         dirpath = os.path.join(prefix, d)
-    #         filepath = os.path.join(prefix, d, fn)
-
-    #         errmsg = "Couldn't write logfile to {0}.  " \
-    #                  "Moving to next path".format(filepath)
-
-    #         successmsg = "Writing log to {0}".format(filepath)
-
-    #         # Does the dir exist?  If not, can we create it?
-    #         if not os.path.exists(dirpath):
-    #             # Try to make the logfile directory
-    #             try:
-    #                 os.mkdir(dirpath)
-    #             except OSError as e:  # Permission Denied or missing directory
-    #                 print e
-    #                 print errmsg
-    #                 continue  # Don't try to write an empty file
-
-    #         # So dir exists.  Can we write to the logfiles there?
-    #         try:
-    #             with open(filepath, 'a') as f:
-    #                 f.write('')
-    #         except (IOError,
-    #                 OSError) as e:  # Permission Denied comes through as an IOError
-    #             print e, '\n', errmsg
-    #         else:
-    #             print successmsg
-    #             break
-    #     else:
-    #         # If none of the prefixes work for some reason, write to local dir
-    #         filepath = fn
-
-    #     return filepath
 
     def dateslist_init(self):
         """Creates dates lists to get passed into OIM urls"""
@@ -408,17 +328,11 @@ class ProbeReport(ReportUtils.Reporter):
     """
     Class to hold information about and generate the probe report
 
-    :param strconfig: Report Configuration file
+    :param str config_file: Report Configuration file
     :param datetime.datetime start: Start time of report range
-    :param bool verbose: Verbose flag
-    :param bool is_test: Whether or not this is a test run.
-    :param bool no_email: If true, don't actually send the email
     """
     def __init__(self, config_file, start, **kwargs):
         report = "Probe"
-
-        # logfile_fname = ov_logfile if ov_logfile is not None else logfile
-        # logfile_override = True if ov_logfile is not None else False
 
         super(ProbeReport, self).__init__(config_file=config_file,
                                           start=start,
@@ -523,7 +437,7 @@ class ProbeReport(ReportUtils.Reporter):
         """Higher-level method that calls the lower-level functions to
         generate the raw data for this report.
 
-        :param dict oimdict:
+        :param dict oimdict: Dict of probes that are registered in OIM
 
         :return set: set of probes that are in OIM but not in the last two days of
         records.
@@ -567,6 +481,8 @@ class ProbeReport(ReportUtils.Reporter):
         """Generator function that generates the report files to send in email.
         This is where we exclude sending emails for those probes we've reported
         on in the last week.
+
+        :param dict oimdict: Dict of probes registered in OIM
 
         Yields if there are emails to send, returns otherwise"""
         missingprobes = self.generate(oimdict)
@@ -690,10 +606,6 @@ class ProbeReport(ReportUtils.Reporter):
 def main():
     args = ReportUtils.parse_opts(no_time_options=True).parse_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
-
-
-    # # Set up the configuration
-    # config = get_configfile(override=args.config)
 
     try:
         # Get OIM Information

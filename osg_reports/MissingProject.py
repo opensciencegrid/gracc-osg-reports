@@ -16,8 +16,6 @@ from ProjectNameCollector import ProjectNameCollector
 MAXINT = 2**31 - 1
 LOGFILE = 'missingproject.log'
 
-# TODO: fix docstrings
-
 
 def parse_report_args():
     """
@@ -25,19 +23,17 @@ def parse_report_args():
     :return: Namespace of parsed arguments
     """
     parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
-    # Report-specific args
     parser.add_argument("-r", "--report-type", dest="report_type",
                         type=unicode, help="Report type (OSG, XD, or OSG-Connect")
     return parser.parse_args()
 
 
 class MissingProjectReport(ReportUtils.Reporter):
-    logfile = 'missingproject.log'
-
+    """
+    Class to hold information for and to run OSG Missing Projects Report 
+    :param: 
+    """
     def __init__(self, report_type, config_file, start, end=None, **kwargs):
-
-        # logfile_fname = ov_logfile if ov_logfile is not None else self.logfile
-        # logfile_override = True if ov_logfile is not None else False
 
         super(MissingProjectReport, self).__init__(report_type=report_type, 
                                                    config_file=config_file, 
@@ -331,10 +327,6 @@ class MissingProjectReport(ReportUtils.Reporter):
 def main():
     args = parse_report_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
-
-
-    # # Set up the configuration
-    # config = get_configfile(override=args.config)
 
     try:
         r = MissingProjectReport(report_type=args.report_type,

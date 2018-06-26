@@ -8,10 +8,7 @@ from elasticsearch_dsl import Search
 from gracc_reporting import ReportUtils, TimeUtils
 
 LOGFILE = 'osgpersitereport.log'
-OPPORTUNISTIC_VOS = ['glow', 'gluex', 'hcc', 'osg', 'sbgrid']
-
-
-# TODO: Fix docstrings
+OPPORTUNISTIC_VOS = ['glow', 'gluex', 'hcc', 'osg', 'sbgrid'] # Default if not specified in config
 
 
 # Helper Functions
@@ -20,8 +17,8 @@ def monthrange(date):
     Takes a start date and finds out the start and end of the month that that
     input date is in
 
-    :param list date: Pass in date list (as returned by TimeUtils.dateparse) or
-    datetime.datetime object.
+    :param datetime.datetime date:  Input date for which we find the start and end date
+        of the month it's in
     :return tuple:datetime.datetime objects that span the month
     (2016-12-05 --> 2016-12-01, 2016-12-31)
     """
@@ -109,6 +106,7 @@ class VO(object):
 
          :param str sitename: Name of site a VO's job set ran on
          :param float corehours: Core hours in the summary record
+         :param bool current: Whether or not we're looking at current or past time period
          """
         key = self.__key_lookup(current)
         self.sites[sitename][key] += corehours
@@ -145,22 +143,13 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
     """Class to store information and perform actions for the OSG Per Site
     Report
 
-    :param str config: Report Configuration file
+    :param str config_file: Report Configuration file
     :param str start: Start time of report range
     :param str end: End time of report range
-    :param str template: Filename of HTML template to generate report
-    :param bool verbose: Verbose flag
-    :param bool is_test: Whether or not this is a test run.
-    :param bool no_email: If true, don't actually send the email
     """
-    # def __init__(self, config, start, end, template=False, verbose=False,
-    #              is_test=False, no_email=False, ov_logfile=None):
     def __init__(self, config_file, start, end, **kwargs):
 
         report = 'siteusage'
-
-        # logfile_fname = ov_logfile if ov_logfile is not None else logfile
-        # logfile_override = True if ov_logfile is not None else False
 
         super(OSGPerSiteReporter, self).__init__(report_type=report, 
                                                  config_file=config_file, 
@@ -390,8 +379,6 @@ def main():
                 monthrange(TimeUtils.parse_datetime(args.start))] ==\
                 [d.date() for d in 
                 monthrange(TimeUtils.parse_datetime(args.end))]
-            # assert monthrange(TimeUtils.parse_datetime(args.start)) ==\
-            #     monthrange(TimeUtils.parse_datetime(args.end))
         except AssertionError:
             raise ValueError("Currently, the OSG Per Site Reporter only supports running over"\
                 " a month time range (e.g. 2017-03-01 to 2017-03-31).  Please"\

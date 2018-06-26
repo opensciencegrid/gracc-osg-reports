@@ -3,19 +3,19 @@ import traceback
 import datetime
 import copy
 import argparse
+from collections import namedtuple
+
+
 from dateutil.relativedelta import *
 
 from elasticsearch_dsl import Search
 
 from gracc_reporting import ReportUtils, TimeUtils
 from gracc_reporting.NiceNum import niceNum
-#from . import Reporter, runerror, get_configfile, get_template, coroutine
-#from . import TextUtils, NiceNum
 from NameCorrection import NameCorrection
 
 
 LOGFILE = 'topoppusage.log'
-# default_templatefile = 'template_topoppusage.html'
 MAXINT = 2**31-1
 facilities = {}
 
@@ -32,8 +32,8 @@ def get_time_range(start=None, end=None, months=None):
     :param str end: Same as start, but end of current reporting period
     :param int months: Number of months prior to current date, to define
     reporting period.
-    :return tuple: Tuple of tuples of datetime.datetime objects representing
-    date ranges (cur_period, prior_period)  
+    :return namedtuple: Tuple of tuples of datetime.datetime objects representing
+    date ranges (prior_period, cur_period)  
     """
     if months:
         if start or end:
@@ -45,21 +45,18 @@ def get_time_range(start=None, end=None, months=None):
         diff = relativedelta(end, start)
     pri_end = start - relativedelta(days=1)
     pri_start = pri_end - diff
-    return (start, end), (pri_start, pri_end)
+    date_range = namedtuple('date_range', ['start', 'end'])
+    range_pair = namedtuple('range_pair', ['prior', 'current'])
+    r = range_pair(prior=date_range(start=pri_start, end=pri_end), 
+                   current=date_range(start=start, end=end))
+    return r
 
 
-# @Reporter.init_reporter_parser
-# def parse_opts(parser):
 def parse_report_args():
     """
-    Specific argument parser for this report.  The decorator initializes the
-    argparse.ArgumentParser object, calls this function on that object to
-    modify it, and then returns the Namespace from that object.
-
-    :param parser: argparse.ArgumentParser object that we intend to add to
-    :return: None
+    Specific argument parser for this report.
+    :return: Namespace of parsed arguments
     """
-    # Report-specific args
     parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
     parser.add_argument("-m", "--months", dest="months",
                         help="Number of months to run report for",
@@ -141,10 +138,6 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
     :param str config: Report Configuration file
     :param str start: Start time of report range
     :param str end: End time of report range
-    :param str template: Filename of HTML template to generate report
-    :param bool is_test: Whether or not this is a test run.
-    :param bool no_email: If true, don't actually send the email
-    :param bool verbose: Verbose flag
     :param int numrank: Number of Facilities to rank.  Default 10.
     :param int months: Number of months prior to today to set start of report
     range
@@ -153,8 +146,6 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
                  months=None, **kwargs):
         report = 'news'
 
-#         logfile_fname = ov_logfile if ov_logfile is not None else logfile
-#         logfile_override = True if ov_logfile is not None else False
 
         super(TopOppUsageByFacility, self).__init__(report_type=report,
                                                     config_file=config_file,
@@ -162,21 +153,12 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
                                                     end=end,
                                                     **kwargs)
 
-#
-#
-#
-#        super(TopOppUsageByFacility, self).__init__(report, config, start, end,
-#                                                    verbose=verbose, no_email=no_email,
-#                                                    is_test=is_test, logfile=logfile_fname,
-#                                                    logfile_override=logfile_override)
-
         self.numrank = numrank
-    #     self.template = template
         self.text = ''
         self.table = ''
         self.daterange = get_time_range(self.start_time, self.end_time, months)
 
-        dates_formatted = (x.strftime("%Y-%m-%d %H:%M") for x in self.daterange[0])
+        dates_formatted = (x.strftime("%Y-%m-%d %H:%M") for x in self.daterange.current)
         self.title = "Opportunistic Resources provided by the top {0} OSG " \
                      "Sites for the OSG Open Facility ({1} - {2})".format(
                         self.numrank, *dates_formatted)
@@ -245,7 +227,7 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
         """
         self.current = True     # Current reporting period or prior
 
-        for self.start_time, self.end_time in self.daterange:
+        for self.start_time, self.end_time in (self.daterange.current, self.daterange.prior):
             results = self.run_query()
             f_parser = self._parse_to_facilities()
 
@@ -448,18 +430,11 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
 
 
 def main():
-    # args = parse_opts()
     args = parse_report_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
-    # Set up the configuration
-    # config = get_configfile(override=args.config)
-
-    # templatefile = get_template(override=args.template, deffile=default_templatefile)
 
     try:
-
-        # Create a report object, create a report for the VO, and send it
         r = TopOppUsageByFacility(config_file=args.config,
                                   start=args.start,
                                   end=args.end,

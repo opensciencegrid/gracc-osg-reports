@@ -10,23 +10,19 @@ from elasticsearch_dsl import Search
 from gracc_reporting import ReportUtils
 
 LOGFILE = 'osgprojectreporter.log'
-# default_templatefile = 'template_project.html'
 MAXINT = 2**31 - 1
 
-# TODO: Fix docstring, clean up comments
 
 # Helper Functions
 def key_to_lower(bucket):
     return bucket.key.lower()
 
 
-# @Reporter.init_reporter_parser
 def parse_report_args():
     """
     Specific argument parser for this report.
     :return: Namespace of parsed arguments
     """
-    # Report-specific args
     parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
     parser.add_argument("-r", "--report-type", dest="report_type",
                         type=unicode, help="Report type (OSG, XD. or OSG-Connect")
@@ -35,26 +31,19 @@ def parse_report_args():
     return parser.parse_args()
 
 
-class OSGReporter(ReportUtils.Reporter):
-    """[summary]
+class OSGProjectReporter(ReportUtils.Reporter):
+    """Class to hold the information for and run the OSG Project Report
 
-    :param report_type: [description]
-    :type report_type: [type]
-    :param config_file: [description]
-    :type config_file: [type]
-    :param start: [description]
-    :type start: [type]
-    :param end: [description], defaults to None
-    :param end: [type], optional
-    :param isSum: [description], defaults to True
-    :param isSum: bool, optional
+    :param str report_type: OSG, XD. or OSG-Connect
+    :param str config_file: Configuration file
+    :param str start: Start time for report range
+    :param str end: End time for report range
+    :param bool isSum: Show a total line at bottom of report, defaults to True
     """
     def __init__(self, report_type, config_file, start, end=None, isSum=True,
                  **kwargs):
-        # logfile_fname = ov_logfile if ov_logfile is not None else logfile
-        # logfile_override = True if ov_logfile is not None else False
 
-        super(OSGReporter, self).__init__(report_type=report_type, 
+        super(OSGProjectReporter, self).__init__(report_type=report_type, 
                                           config_file=config_file, 
                                           start=start, 
                                           end=end, 
@@ -64,7 +53,6 @@ class OSGReporter(ReportUtils.Reporter):
         self.header = ["Project Name", "PI", "Institution", "Field of Science",
                      "Wall Hours"]
         self.logger.info("Report Type: {0}".format(self.report_type))
-        # self.isSum = isSum
         self.tgmatch = re.compile('TG-')
 
     def run_report(self):
@@ -73,7 +61,7 @@ class OSGReporter(ReportUtils.Reporter):
         self.send_report()
 
     def query(self):
-        """Method to query Elasticsearch cluster for OSGReporter information
+        """Method to query Elasticsearch cluster for OSGProjectReporter information
 
         :return elasticsearch_dsl.Search: Search object containing ES query
         """
@@ -217,8 +205,8 @@ class OSGReporter(ReportUtils.Reporter):
         """
         Makes sure we include ONLY "TG-" projects in XD report and only non-
         "TG-" projects in other reports
-        :param pname:
-        :return:
+        :param str pname: Project name to validate
+        :return bool: Whether or not the project name pname is valid for the report type
         """
         return True if \
             (self.report_type == 'XD' and self.tgmatch.match(pname) or
@@ -230,14 +218,8 @@ def main():
     args = parse_report_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
-    # Set up the configuration
-    # config = get_configfile(override=args.config)
-
-
-    # templatefile = get_template(override=args.template, deffile=default_templatefile)
-
     try:
-        r = OSGReporter(report_type=args.report_type,
+        r = OSGProjectReporter(report_type=args.report_type,
                         config_file=args.config,
                         start=args.start,
                         end=args.end,
