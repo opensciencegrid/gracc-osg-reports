@@ -1,5 +1,5 @@
 # Build RPM
-FROM shreyb/gracc-reporting:base_2.0 as builder
+FROM shreyb/gracc-reporting:2.0 as builder
 
 # Version
 ARG version
@@ -20,7 +20,7 @@ WORKDIR ~/rpmbuild/SOURCES
 RUN rpmbuild -ba ~/rpmbuild/SPECS/osg-reports.spec
 
 # Build osg-reports image
-FROM shreyb/gracc-reporting:base_2.0 as osg-reports
+FROM shreyb/gracc-reporting:2.0 as osg-reports
 ARG version
 COPY --from=builder /root/rpmbuild/RPMS/noarch/osg-reports-$version.noarch.rpm /tmp
 
