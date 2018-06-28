@@ -1,29 +1,17 @@
-# Build RPM
-FROM shreyb/gracc-reporting:2.0 as builder
-
-# Version
+FROM shreyb/gracc-reporting:2.0 
 ARG version
 
-# Setup:  Install RPM tools 
-RUN yum install -y rpm-build rpmdevtools python-setuptools python-srpm-macros python-rpm-macros python2-rpm-macros epel-rpm-macros
+RUN apk update \
+	&& apk add build-base \
+	&& apk add postgresql-dev
 
-# Set up directory structure
-RUN mkdir -p ~/rpmbuild/{RPMS,SRPMS,BUILD,SOURCES,SPECS,tmp}
+ADD osg-reports-$version.tar.gz /tmp/osg-reports-$version.tar.gz
+WORKDIR /tmp/osg-reports-$version.tar.gz/osg-reports-$version/
 
-COPY osg-reports-$version.tar.gz /tmp/osg-reports-$version.tar.gz
-COPY osg-reports.spec /tmp
+RUN python setup.py install
 
-RUN cp /tmp/osg-reports-$version.tar.gz ~/rpmbuild/SOURCES/
-RUN cp /tmp/osg-reports.spec ~/rpmbuild/SPECS/
+RUN mkdir /tmp/html_templates && mkdir /tmp/osg-reports-config
 
-WORKDIR ~/rpmbuild/SOURCES
-RUN rpmbuild -ba ~/rpmbuild/SPECS/osg-reports.spec
+RUN cp /tmp/osg-reports-$version.tar.gz/osg-reports-$version/html_templates/* /tmp/html_templates
 
-# Build osg-reports image
-FROM shreyb/gracc-reporting:2.0 as osg-reports
-ARG version
-COPY --from=builder /root/rpmbuild/RPMS/noarch/osg-reports-$version.noarch.rpm /tmp
-
-# Install gracc-reporting
-RUN yum -y install /tmp/osg-reports-$version.noarch.rpm
 
