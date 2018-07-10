@@ -123,7 +123,7 @@ class FlockingReport(ReportUtils.Reporter):
 
 
 def main():
-    args = ReportUtils.parse_opts().parse_args()
+    args = ReportUtils.get_report_parser().parse_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
     try:

@@ -604,7 +604,7 @@ class ProbeReport(ReportUtils.Reporter):
 
 
 def main():
-    args = ReportUtils.parse_opts(no_time_options=True).parse_args()
+    args = ReportUtils.get_report_parser(no_time_options=True).parse_args()
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
     try:

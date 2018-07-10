@@ -22,7 +22,7 @@ def parse_report_args():
     Specific argument parser for this report.
     :return: Namespace of parsed arguments
     """
-    parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
+    parser = argparse.ArgumentParser(parents=[ReportUtils.get_report_parser()])
     parser.add_argument("-r", "--report-type", dest="report_type",
                         type=unicode, help="Report type (OSG, XD, or OSG-Connect")
     return parser.parse_args()

@@ -57,7 +57,7 @@ def parse_report_args():
     Specific argument parser for this report.
     :return: Namespace of parsed arguments
     """
-    parser = argparse.ArgumentParser(parents=[ReportUtils.parse_opts()])
+    parser = argparse.ArgumentParser(parents=[ReportUtils.get_report_parser()])
     parser.add_argument("-m", "--months", dest="months",
                         help="Number of months to run report for",
                         default=None, type=int)
