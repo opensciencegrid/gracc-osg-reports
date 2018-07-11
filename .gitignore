@@ -4,3 +4,4 @@
 
 # Docker Admin Scripts
 Docker/AdminScripts/*.sh
+config/*.toml
