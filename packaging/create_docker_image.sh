@@ -26,7 +26,7 @@ if [[ "x$DOCKER" == "x" ]] ; then
 	exit 1
 fi
 
-DOCKERIMAGEPREFIX="shreyb/gracc-osg-reports"
+DOCKERIMAGEPREFIX="opensciencegrid/gracc-osg-reports"
 DOCKERIMAGE="${DOCKERIMAGEPREFIX}:${VERSION}"
 echo "Will build image $DOCKERIMAGE"
 
