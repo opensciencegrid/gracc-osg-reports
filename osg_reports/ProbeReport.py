@@ -345,6 +345,7 @@ class ProbeReport(ReportUtils.Reporter):
         self.emailfile = '/tmp/filetoemail.txt'
         self.probe, self.resource = None, None
         self.historyfile = self.statefile_path()
+        print self.historyfile
         self.newhistory = []
         self.reminder = False
 
