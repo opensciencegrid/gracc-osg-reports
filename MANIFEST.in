@@ -1,0 +1,3 @@
+include osg.toml
+include OSG_README.md
+recursive-include html_templates *.html
