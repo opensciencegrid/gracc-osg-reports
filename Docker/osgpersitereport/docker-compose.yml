@@ -1,7 +1,7 @@
 version: "2"
 services:
         osgpersitereport:
-                image: "shreyb/gracc-osg-reports:osgpersitereport_${VERSIONRELEASE}"
+                image: "opensciencegrid/gracc-osg-reports:osgpersitereport_${VERSIONRELEASE}"
                 volumes:
                         - ${LOCALLOGDIR}:/tmp/log
                         - ${CONFIGDIR}:/tmp/gracc-osg-reports-config

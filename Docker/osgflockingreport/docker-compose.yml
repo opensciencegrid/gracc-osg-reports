@@ -1,7 +1,7 @@
 version: "2"
 services:
         osgflockingreport:
-                image: "shreyb/gracc-osg-reports:osgflockingreport_${VERSIONRELEASE}"
+                image: "opensciencegrid/gracc-osg-reports:osgflockingreport_${VERSIONRELEASE}"
                 volumes:
                         - ${LOCALLOGDIR}:/tmp/log
                         - ${CONFIGDIR}:/tmp/gracc-osg-reports-config

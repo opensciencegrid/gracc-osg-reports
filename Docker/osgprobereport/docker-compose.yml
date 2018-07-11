@@ -1,7 +1,7 @@
 version: "2"
 services:
         osgprobereport:
-                image: "shreyb/gracc-osg-reports:osgprobereport_${VERSIONRELEASE}"
+                image: "opensciencegrid/gracc-osg-reports:osgprobereport_${VERSIONRELEASE}"
                 volumes:
                         - state:/tmp/log:Z
                         - ${CONFIGDIR}:/tmp/gracc-osg-reports-config
