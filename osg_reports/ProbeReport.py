@@ -11,6 +11,7 @@ import email.utils
 from email.mime.text import MIMEText
 import datetime
 import dateutil
+import argparse
 
 from elasticsearch_dsl import Search, Q
 
@@ -19,6 +20,17 @@ from gracc_reporting import ReportUtils
 
 LOGFILE = 'probereport.log'
 TODAY = datetime.datetime.now()
+
+# Helper functions
+def parse_report_args():
+    """
+    Specific argument parser for this report.
+    :return: Namespace of parsed arguments
+    """
+    parser = argparse.ArgumentParser(parents=[ReportUtils.get_report_parser(no_time_options=True)])
+    parser.add_argument("-S", "--statefile", dest="statefile",
+                        type=str, default=None, help="File where report state should be kept")
+    return parser.parse_args()
 
 
 class OIMInfo(object):
@@ -243,7 +255,7 @@ class OIMInfo(object):
                 resource_grouppath = './ResourceGroup/Resources/Resource/' \
                                      '[Name="{0}"]/../..'.format(resourcename)
                 self.resourcedict[resourcename] = \
-                    self.get_resource_information(resource_grouppath,
+                    self.get_resource_informati"on(resource_grouppath,
                                                   resourcename)
         return
 
@@ -330,8 +342,9 @@ class ProbeReport(ReportUtils.Reporter):
 
     :param str config_file: Report Configuration file
     :param datetime.datetime start: Start time of report range
+    :param datetime.datetime statefile: File where state should be kept
     """
-    def __init__(self, config_file, start, **kwargs):
+    def __init__(self, config_file, start, statefile, **kwargs):
         report = "Probe"
 
         super(ProbeReport, self).__init__(config_file=config_file,
@@ -344,8 +357,8 @@ class ProbeReport(ReportUtils.Reporter):
         self.estimeformat = re.compile("(.+)T(.+)\.\d+Z")
         self.emailfile = '/tmp/filetoemail.txt'
         self.probe, self.resource = None, None
-        self.historyfile = self.statefile_path()
-        print self.historyfile
+        self.historyfile = statefile if statefile is not None else self.statefile_path()
+        print "State file: ", self.historyfile
         self.newhistory = []
         self.reminder = False
 
@@ -605,7 +618,7 @@ class ProbeReport(ReportUtils.Reporter):
 
 
 def main():
-    args = ReportUtils.get_report_parser(no_time_options=True).parse_args()
+    args = parse_report_args() 
     logfile_fname = args.logfile if args.logfile is not None else LOGFILE
 
     try:
@@ -619,6 +632,7 @@ def main():
         # Set up and send probe report
         preport = ProbeReport(config_file=args.config,
                               start=startdate,
+                              statefile=args.statefile,
                               verbose=args.verbose,
                               is_test=args.is_test,
                               no_email=args.no_email,
