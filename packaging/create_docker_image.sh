@@ -1,5 +1,5 @@
 #!/bin/bash
-# Wrapper to set the correct env variables and build the docker container for osg-reports
+# Wrapper to set the correct env variables and build the docker container for gracc-osg-reports
 
 START=${PWD}
 SETUP_DOT_PY=${PWD}/../setup.py
@@ -15,7 +15,7 @@ else
 	echo "VERSION $VERSION"
 fi
 
-SRC=${START}/../dist/osg-reports-${VERSION}.tar.gz
+SRC=${START}/../dist/gracc-osg-reports-${VERSION}.tar.gz
 TARFILENAME=${SRC##*/}
 
 DOCKER=`which docker`
@@ -26,7 +26,7 @@ if [[ "x$DOCKER" == "x" ]] ; then
 	exit 1
 fi
 
-DOCKERIMAGEPREFIX="shreyb/osg-reports"
+DOCKERIMAGEPREFIX="shreyb/gracc-osg-reports"
 DOCKERIMAGE="${DOCKERIMAGEPREFIX}:${VERSION}"
 echo "Will build image $DOCKERIMAGE"
 

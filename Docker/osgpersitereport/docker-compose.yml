@@ -1,0 +1,11 @@
+version: "2"
+services:
+        osgpersitereport:
+                image: "shreyb/gracc-osg-reports:osgpersitereport_${VERSIONRELEASE}"
+                volumes:
+                        - ${LOCALLOGDIR}:/tmp/log
+                        - ${CONFIGDIR}:/tmp/gracc-osg-reports-config
+                        - /etc/localtime:/etc/localtime
+                network_mode: "host"
+                command: ["-s", "${starttime}", "-c", "/tmp/gracc-osg-reports-config/osg.toml", "-T", "/tmp/html_templates/template_persite.html"]
+

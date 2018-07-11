@@ -1,3 +1,6 @@
 # Python binaries
 *.py[cod]
 *.log
+
+# Docker Admin Scripts
+Docker/AdminScripts/*.sh
