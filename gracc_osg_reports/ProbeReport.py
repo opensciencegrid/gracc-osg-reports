@@ -255,7 +255,7 @@ class OIMInfo(object):
                 resource_grouppath = './ResourceGroup/Resources/Resource/' \
                                      '[Name="{0}"]/../..'.format(resourcename)
                 self.resourcedict[resourcename] = \
-                    self.get_resource_informati"on(resource_grouppath,
+                    self.get_resource_information(resource_grouppath,
                                                   resourcename)
         return
 
