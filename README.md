@@ -1,15 +1,22 @@
-OSG Reports
+GRACC OSG Reports
 ============
 
-For each report, you can specify a non-standard location for the config file with -c, or for a template file with -T.  The defaults are in [src/graccreports/config](https://github.com/shreyb/gracc-reporting/tree/master/src/graccreports/config) and [src/graccreports/html_templates](https://github.com/shreyb/gracc-reporting/tree/master/src/graccreports/html_templates).
-The -d, -n, and -v flags are, respectively, dryrun (test), no email, and verbose.
+_gracc-osg-reports_ is a set of reports that collect and present data from the OSG monitoring 
+system [GRACC](https://gracc.opensciencegrid.org) to Open Science Grid stakeholders.  These reports were 
+previously packaged along with the underlying libraries [gracc-reporting](https://github.com/opensciencegrid/gracc-reporting), 
+but have now been separated out to facilitate independent development on the reports or the libraries on which they 
+depend.
+
+For each report, you can specify a non-standard location for the config file with -c, template file with -T, or 
+a logfile with -L.  In the absence of the latter, the reports log to stdout.  The -d, -n, and -v flags are, 
+respectively, dryrun (test), no email, and verbose.
 
 Examples:
 
 **OSG Project Usage Report:**
 ```
-    osgreport -s 2016-12-06 -e 2016-12-13 -r OSG-Connect -d -v -n   # No missing projects in this case
-    osgreport -s 2016-12-06 -e 2016-12-13 -r XD -d -v -n   # Missing projects in this case
+    osgprojectreport -s 2016-12-06 -e 2016-12-13 -r OSG-Connect -d -v -n   # No missing projects in this case
+    osgprojectreport -s 2016-12-06 -e 2016-12-13 -r XD -d -v -n   # Missing projects in this case
 ```
 **Missing Projects report:**
 ```
