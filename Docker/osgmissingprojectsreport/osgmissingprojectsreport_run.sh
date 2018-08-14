@@ -4,7 +4,7 @@
 # Example:  ./missing_run.sh weekly
 
 
-export VERSIONRELEASE=2.0
+export VERSIONRELEASE=2.0.1
 export TOPDIR=/opt/gracc-osg-reports
 export LOCALLOGDIR=${TOPDIR}/log
 export SCRIPTLOGFILE=${LOCALLOGDIR}/missing_run.log
