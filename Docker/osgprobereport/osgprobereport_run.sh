@@ -3,7 +3,7 @@
 # Wrapper script to run the OSG Probe report inside a Docker container
 
 
-export VERSIONRELEASE=2.0
+export VERSIONRELEASE=2.0.1
 export TOPDIR=/opt/gracc-osg-reports
 export LOCALLOGDIR=${TOPDIR}/log
 export SCRIPTLOGFILE=${LOCALLOGDIR}/probereport_run.log
