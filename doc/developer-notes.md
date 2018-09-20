@@ -1,14 +1,14 @@
 gracc-osg-reports Developer Documentation
 ================
 
-These are the developer docs for _gracc-osg-reports.  They're by no means complete, but I've attempted to 
+These are the developer docs for _gracc-osg-reports_.  They're by no means complete, but I've attempted to 
 note the important info for anyone coming in and trying to write a report.
 
 _gracc-osg-reports_ is a set of reports and a couple of helper modules built on top of [_gracc-reporting_](https://github.com/opensciencegrid/gracc-reporting),
-that query [GRACC](https://gracc.opensciencegrid.org/) elasticsearch, aggregate and process the results,
+that query [GRACC](https://gracc.opensciencegrid.org/) elasticsearch, aggregate and process the results
 into a report, and email those to stakeholders.
 
-Currently, the _gracc-osg-reports_ assume that queries to the GRACC instance will be made using
+Currently, the _gracc-osg-reports_ package assume that queries to the GRACC instance will be made using
 Honza Kral's [elasticsearch-dsl-py](https://github.com/elastic/elasticsearch-dsl-py) library, and 
 indeed, this is a dependency of this package.  Any report queries should be made using this API.  However, this may change in the 
 future, since the ultimate aim is to provide flexibility for future report writers to simply 
@@ -22,7 +22,7 @@ text-processing utilities to automatically generate the report from the organize
 all simpler reports (and whenever possible).  An example of this is the Flocking report.  The second method is to 
 do all of the text manipulation and populate the HTML template manually.  An example of this is the Top Opportunistic Usage by Facility (news) report.
 
-For both methods, you'll need to create a class for the report that subclasses ReportUtils.Reporter from gracc_reporting, and pass its required parameters into init (config, start, end).
+For both methods, you'll need to create a class for the report that subclasses ReportUtils.Reporter from gracc_reporting, and pass its required parameters into __init__ (config, start, end).
  This class will have to implement the following methods:
 
 ## run_report(self)
@@ -45,7 +45,7 @@ for some other method to parse or act on.
 
 This method is not required to be defined. Best practice, however, is to define either this or generate_report_file() (see below).
 This method should take the data after parsing, and organize it into a dictionary of lists, with each list 
-representing a column.  ReportUtils.Reporter.send_report will then insert this into the HTML template, 
+representing a column.  In that case, self.header (a list) should list the columns in order from left-to-right.  ReportUtils.Reporter.send_report will then insert this into the HTML template, 
 a CSV file, and plaintext and send it.  Again, for an example, please see the Flocking Report (OsgFlockingReporter.py).
 
 ## generate_report_file(self)
@@ -59,7 +59,7 @@ will use this and send an HTML report.  An example that uses this method is the 
 
 # Putting it together into a report
 
-The easiest way, then to write a report from these is to simply instantiate the report class from main() and then calling run_report from that instantiation.  Without error handling, that might look like this:
+The easiest way, then to write a report from these is to simply instantiate the report class from main() and then to call run_report() from that instantiation.  Without error handling, that might look like this:
 
 ```python
 def main():
@@ -79,7 +79,7 @@ through the calls until you got here, and then run that function on the error in
 
 
 
-#### Helper methods in Reporter.ReportUtils
+## Helper methods in Reporter.ReportUtils
 
 
 ### runerror
@@ -142,12 +142,11 @@ setup.py in the root of the repository.  Then, simply run
 ```
 python setup.py sdist
 ```
-If you want to simply  write reports on top of gracc_reporting, you can take the tarball created in the
-_dist_ directory, move it where you need, untar it, and run 
+You can then unwind the tarball created in the _dist_ directory wherever you want to deploy this, and run 
 ```
 python setup.py install
 ```
-or simply run the last two commands in order to install the gracc-reporting package in place.
+Make sure _gracc-reporting_ is installed before you try to install _gracc-osg-reports_.
 
 For an OSG installation, for which we use a docker container to build reports on, navigate to 
 _packaging/_ and run _create_docker_image.sh_.  Keep in mind that you must have write access to the Open 
