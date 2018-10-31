@@ -1,4 +1,4 @@
-FROM opensciencegrid/gracc-reporting:2.0 
+FROM opensciencegrid/gracc-reporting:2.0.1 
 ARG version
 
 RUN apk update \
