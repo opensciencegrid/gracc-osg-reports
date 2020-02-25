@@ -42,6 +42,7 @@ default_logdir = '/var/log'
         'condor:csiu.grid.iu.edu', 'condor:submit.mit.edu', 'condor:login01.osgconnect.net',
         'condor:login.ci-connect.uchicago.edu', 'condor:login.umich.ci-connect.net',
         'condor:login02.osgconnect.net', 'condor:login03.osgconnect.net',
+        'condor:login04.osgconnect.net', 'condor:login05.osgconnect.net',
         'condor:login.usatlas.org', 'condor:login.duke.ci-connect.net',
         'condor:login.xenon.ci-connect.net', 'condor:login.duke.ci-connect.net']
     to_emails = ['nobody@example.com', ]
@@ -85,7 +86,7 @@ default_logdir = '/var/log'
         to_names = ['Recipient Name',]
 
     [project.osg-connect]
-        probe_list = ['condor:login01.osgconnect.net', 'condor:login.ci-connect.uchicago.edu', 'condor:login.umich.ci-connect.net', 'condor:login02.osgconnect.net', 'condor:login03.osgconnect.net', 'condor:login.usatlas.org', 'condor:login.xenon.ci-connect.net']
+        probe_list = ['condor:login01.osgconnect.net', 'condor:login.ci-connect.uchicago.edu', 'condor:login.umich.ci-connect.net', 'condor:login02.osgconnect.net', 'condor:login03.osgconnect.net', 'condor:login.usatlas.org', 'condor:login.xenon.ci-connect.net', 'condor:login04.osgconnect.net', 'condor:login05.osgconnect.net']
         to_emails = ['nobody@example.com', ]
         to_names = ['Recipient Name',]
 
