@@ -25,6 +25,7 @@ setup(name='gracc-osg-reports',
               'osgprobereport = gracc_osg_reports.ProbeReport:main',
               'osgtopoppusagereport = gracc_osg_reports.TopOppUsageByFacility:main',
               'osgmissingprojects = gracc_osg_reports.MissingProject:main',
+              'osgmissingvo = gracc_osg_reports.MissingVO:main',
               ]
           }
      )
