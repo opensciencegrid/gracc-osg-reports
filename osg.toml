@@ -108,3 +108,9 @@ default_logdir = '/var/log'
     password = 'PASSWORD'
     schema = 'teragrid'
 
+
+[missingvo]
+    index_pattern='gracc.osg.summary'
+    to_emails = ['nobody@example.com', ]
+    to_names = ['Recipient Name', ]
+    vo_oim_url = 'https://topology.opensciencegrid.org/vosummary/xml'

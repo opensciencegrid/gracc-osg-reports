@@ -10,13 +10,13 @@ if sys.version_info < VERSION_TUPLE:
     exit(1)
 
 setup(name='gracc-osg-reports',
-      version='2.0.2',
+      version='2.1.0',
       description='OSG GRACC Email Reports',
       author_email='sbhat@fnal.gov',
       author='Shreyas Bhat',
       url='https://github.com/opensciencegrid/gracc-reporting',
       packages=['gracc_osg_reports'],
-      install_requires=['gracc_reporting==2.0.1', 'elasticsearch_dsl==5.4.0', 'psycopg2', 'requests',],
+      install_requires=['gracc_reporting==2.0.2', 'elasticsearch_dsl==5.4.0', 'psycopg2', 'requests',],
       entry_points={
           'console_scripts': [
               'osgflockingreport = gracc_osg_reports.OSGFlockingReporter:main',
@@ -25,6 +25,7 @@ setup(name='gracc-osg-reports',
               'osgprobereport = gracc_osg_reports.ProbeReport:main',
               'osgtopoppusagereport = gracc_osg_reports.TopOppUsageByFacility:main',
               'osgmissingprojects = gracc_osg_reports.MissingProject:main',
+              'osgmissingvo = gracc_osg_reports.MissingVO:main',
               ]
           }
      )
