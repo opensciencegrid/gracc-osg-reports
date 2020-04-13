@@ -103,26 +103,19 @@ fi
 # Run the report container
 echo "START" `date` >> $SCRIPTLOGFILE
 
-for TYPE in ${REPORT_TYPES}
-do
-    echo $TYPE
-    export TYPE
+${DOCKER_COMPOSE_EXEC} up
+ERR=$?
+dc_EXITCODE=`${DOCKER_COMPOSE_EXEC} ps -q | xargs docker inspect -f '{{ .State.ExitCode}}'`
+MSG="Error sending report. Please investigate"
 
-    ${DOCKER_COMPOSE_EXEC} up
-    ERR=$?
-    dc_EXITCODE=`${DOCKER_COMPOSE_EXEC} ps -q | xargs docker inspect -f '{{ .State.ExitCode}}'`
-    MSG="Error sending report. Please investigate"
-    SMSG="Sent $TYPE report" 
-    ERRCODE=`expr $ERR + $dc_EXITCODE`
+dc_error_handle $ERR $dc_EXITCODE "$MSG"
 
-    dc_error_handle $ERR $dc_EXITCODE "$MSG" "$SMSG"
+echo "Sent report" >> $SCRIPTLOGFILE
 
-    if [[ $PUSHPROMMETRICS == 1 ]] ;
-    then
-	prom_push
-    fi
-
-done
+if [[ $PUSHPROMMETRICS == 1 ]] ;
+then
+        prom_push
+fi
 
 echo "END" `date` >> $SCRIPTLOGFILE
 exit 0
