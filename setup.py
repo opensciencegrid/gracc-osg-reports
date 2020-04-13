@@ -10,7 +10,7 @@ if sys.version_info < VERSION_TUPLE:
     exit(1)
 
 setup(name='gracc-osg-reports',
-      version='2.0.2',
+      version='2.1.0',
       description='OSG GRACC Email Reports',
       author_email='sbhat@fnal.gov',
       author='Shreyas Bhat',

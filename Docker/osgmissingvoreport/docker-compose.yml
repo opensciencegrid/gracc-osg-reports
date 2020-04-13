@@ -1,0 +1,11 @@
+version: "2"
+services:
+        osgprojectreport:
+                image: "opensciencegrid/gracc-osg-reports:osgmissingvoreport_${VERSIONRELEASE}"
+                volumes:
+                        - ${LOCALLOGDIR}:/tmp/log
+                        - ${CONFIGDIR}:/tmp/gracc-osg-reports-config
+                        - /etc/localtime:/etc/localtime
+                network_mode: "host"
+                command: ["-s", "${starttime}", "-e", "${endtime}", "-c", "/tmp/gracc-osg-reports-config/osg.toml", "-r" ,"${TYPE}", "-T", "/tmp/html_templates/template_project.html"]
+
