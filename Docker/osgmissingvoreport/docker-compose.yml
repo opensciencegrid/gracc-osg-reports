@@ -7,5 +7,5 @@ services:
                         - ${CONFIGDIR}:/tmp/gracc-osg-reports-config
                         - /etc/localtime:/etc/localtime
                 network_mode: "host"
-                command: ["-s", "${starttime}", "-e", "${endtime}", "-c", "/tmp/gracc-osg-reports-config/osg.toml", "-r" ,"${TYPE}", "-T", "/tmp/html_templates/template_project.html"]
+                command: ["-s", "${starttime}", "-e", "${endtime}", "-c", "/tmp/gracc-osg-reports-config/osg.toml", "-T", "/tmp/html_templates/template_project.html"]
 
