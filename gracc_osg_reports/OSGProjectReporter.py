@@ -25,7 +25,7 @@ def parse_report_args():
     """
     parser = argparse.ArgumentParser(parents=[ReportUtils.get_report_parser()])
     parser.add_argument("-r", "--report-type", dest="report_type",
-                        type=unicode, help="Report type (OSG, XD. or OSG-Connect")
+                        type=str, help="Report type (OSG, XD. or OSG-Connect")
     parser.add_argument('--nosum', dest="isSum", action='store_false',
                         help="Do not show a total line")
     return parser.parse_args()
@@ -142,7 +142,7 @@ class OSGProjectReporter(ReportUtils.Reporter):
         allterms = copy.copy(unique_terms)
         allterms.extend(metrics)
 
-        print data
+        print(data)
         for entry in data:
             yield [entry[field] for field in allterms]
 
@@ -159,9 +159,9 @@ class OSGProjectReporter(ReportUtils.Reporter):
                 continue
 
             if self.verbose:
-                print u"{0}\t{1}\t{2}\t{3}\t{4}".format(*result_list)
-            mapdict = dict(zip(self.header, result_list))
-            for key, item in mapdict.iteritems():
+                print("{0}\t{1}\t{2}\t{3}\t{4}".format(*result_list))
+            mapdict = dict(list(zip(self.header, result_list)))
+            for key, item in mapdict.items():
                 report[key].append(item)
 
         if self.isSum:

@@ -10,7 +10,7 @@ import argparse
 from elasticsearch_dsl import Search
 
 from gracc_reporting import ReportUtils
-from ProjectNameCollector import ProjectNameCollector
+from .ProjectNameCollector import ProjectNameCollector
 
 
 MAXINT = 2**31 - 1
@@ -24,7 +24,7 @@ def parse_report_args():
     """
     parser = argparse.ArgumentParser(parents=[ReportUtils.get_report_parser()])
     parser.add_argument("-r", "--report-type", dest="report_type",
-                        type=unicode, help="Report type (OSG, XD, or OSG-Connect")
+                        type=str, help="Report type (OSG, XD, or OSG-Connect")
     return parser.parse_args()
 
 
@@ -70,7 +70,7 @@ class MissingProjectReport(ReportUtils.Reporter):
         probes = self.config['project'][self.report_type.lower()]['probe_list']
 
         if self.verbose:
-            print probes
+            print(probes)
         s = Search(using=self.client, index=self.indexpattern) \
                 .filter("range", EndTime={"gte": starttimeq, "lt": endtimeq}) \
                 .filter("range", WallDuration={"gt": 0}) \

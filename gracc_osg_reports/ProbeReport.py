@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import ast
 import os
 import re
@@ -105,7 +105,7 @@ class OIMInfo(object):
         """
 
         if override_fn:
-            print "Writing log to {0}".format(override_fn)
+            print("Writing log to {0}".format(override_fn))
             return override_fn
 
         try_locations = [os.path.expanduser('~')]
@@ -136,8 +136,8 @@ class OIMInfo(object):
                 try:
                     os.makedirs(dirpath)
                 except OSError as e:  # Permission Denied or missing directory
-                    print e
-                    print errmsg
+                    print(e)
+                    print(errmsg)
                     continue  # Don't try to write somewhere we can't
 
             # So dir exists.  Can we write to the logfiles there?
@@ -146,9 +146,9 @@ class OIMInfo(object):
                     f.write('')
             except (IOError,
                     OSError) as e:  # Permission Denied comes through as an IOError
-                print e, '\n', errmsg
+                print(e, '\n', errmsg)
             else:
-                print successmsg
+                print(successmsg)
                 break
         else:
             # If none of the prefixes work for some reason, write to current working dir
@@ -183,15 +183,15 @@ class OIMInfo(object):
             # print oim_url
             if tag == 'dt':
                 oim_url = oim_url.format(*self.dateslist_init())
-                print oim_url
+                print(oim_url)
 
         if self.verbose:
             self.logger.info(oim_url)
 
         try:
-            oim_xml = urllib2.urlopen(oim_url)
+            oim_xml = urllib.request.urlopen(oim_url)
             self.logger.info("Got OIM {0} file successfully".format(label))
-        except (urllib2.HTTPError, urllib2.URLError) as e:
+        except (urllib.error.HTTPError, urllib.error.URLError) as e:
             self.logger.error("Couldn't get OIM {0} file".format(label))
             self.logger.exception(e)
             if tag == 'rg':
@@ -273,7 +273,7 @@ class OIMInfo(object):
 
         # Resource group-specific info
         resource_group_elt = self.root.find(rgpath)
-        for key, path in xpathsdict['rg_pathdictionary'].iteritems():
+        for key, path in xpathsdict['rg_pathdictionary'].items():
             try:
                 returndict[key] = resource_group_elt.find(path).text
             except AttributeError:
@@ -283,7 +283,7 @@ class OIMInfo(object):
         # Resource-specific info
         resource_elt = resource_group_elt.find(
             './Resources/Resource/[Name="{0}"]'.format(rname))
-        for key, path in xpathsdict['r_pathdictionary'].iteritems():
+        for key, path in xpathsdict['r_pathdictionary'].items():
             try:
                 returndict[key] = resource_elt.find(path).text
             except AttributeError:
@@ -329,7 +329,7 @@ class OIMInfo(object):
         """
         downtimes = self.get_downtimes()
         oim_probe_dict = {}
-        for resourcename, info in self.resourcedict.iteritems():
+        for resourcename, info in self.resourcedict.items():
             if ast.literal_eval(info['WLCGInteropAcct']) and \
                             info['FQDN'] not in downtimes:
                 oim_probe_dict[info['FQDN']] = info['Resource']
@@ -358,7 +358,7 @@ class ProbeReport(ReportUtils.Reporter):
         self.emailfile = '/tmp/filetoemail.txt'
         self.probe, self.resource = None, None
         self.historyfile = statefile if statefile is not None else self.statefile_path()
-        print "State file: ", self.historyfile
+        print("State file: ", self.historyfile)
         self.newhistory = []
         self.reminder = False
 
@@ -639,7 +639,7 @@ def main():
                               logfile=logfile_fname)
 
         preport.run_report(oim_probe_fqdn_dict)
-        print 'Probe Report Execution finished'
+        print('Probe Report Execution finished')
     except Exception as e:
         ReportUtils.runerror(args.config, e, traceback.format_exc(), 
             logfile_fname)

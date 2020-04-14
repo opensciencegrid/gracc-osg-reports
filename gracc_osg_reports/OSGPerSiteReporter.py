@@ -65,7 +65,7 @@ def perc(num, den):
         if num == 0:
             return 0.
         else:
-            raise("Error: Tried to do division of {0}/{1}".format(num, den))
+            raise "Error: Tried to do division of {0}/{1}".format(num, den)
 
 
 def perc_change(old, new):
@@ -278,7 +278,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
 
         # Add VO Data to the report
         inspos = 2
-        for vo, vo_object in sorted(self.vodict.iteritems()):
+        for vo, vo_object in sorted(self.vodict.items()):
             if vo not in self.header:
                 if vo in self.opp_vos:
                     # Insert the opportunistic VOs into the header
@@ -335,7 +335,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
         # data
 
         # Previous month totals and percent change by VO
-        for col, values in report.iteritems():
+        for col, values in report.items():
             if col == "Site":
                 values.append("Prev. Month Total")
                 values.append("Percent Change over Prev. Month")
@@ -364,7 +364,7 @@ class OSGPerSiteReporter(ReportUtils.Reporter):
         report["Percentage Change Month-Month"].extend(('N/A', 'N/A'))
 
         # Insert a blank line
-        for values in report.itervalues():
+        for values in report.values():
             values.insert(-3, '')
 
         return report
@@ -400,7 +400,7 @@ def main():
                                        logfile=logfile_fname)
 
         osgreport.run_report()
-        print 'OSG Per Site Report Execution finished'
+        print('OSG Per Site Report Execution finished')
         sys.exit(0)
     except Exception as e:
         ReportUtils.runerror(args.config, e, traceback.format_exc(), logfile_fname)

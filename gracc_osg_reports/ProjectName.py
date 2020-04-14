@@ -31,15 +31,15 @@ class ProjectName:
             cmd(str) - shell command
         """
         if self.verbose:
-            print >> sys.stdout, cmd
+            print(cmd, file=sys.stdout)
         proc = subprocess.Popen(cmd, shell=True,  stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         # Reads from pipes, avoides blocking
         result, error = proc.communicate()
         return_code = proc.wait()
         if self.verbose:
-            print >> sys.stdout, result
-            print >> sys.stderr, error
-            print >> sys.stdout, "command return code is %s" % (return_code, )
+            print(result, file=sys.stdout)
+            print(error, file=sys.stderr)
+            print("command return code is %s" % (return_code, ), file=sys.stdout)
         return result.strip().split("\n"), return_code
 
     def execute_query(self, url_type=None):
@@ -119,7 +119,7 @@ class ProjectName:
         try:
             return self.execute_query()
         except:
-            print >> sys.stderr, sys.exc_info()[0]
+            print(sys.exc_info()[0], file=sys.stderr)
             return 1
 
     def set_pi(self, pi = None):
@@ -169,7 +169,7 @@ class ProjectName:
                 wh(float) - wall hours
                 jn(int) - number of jobs"""
 
-        if self.clusters.has_key(h):
+        if h in self.clusters:
             v = self.clusters[h]
         else:
             v = [0, 0, 0, 0]
@@ -180,7 +180,7 @@ class ProjectName:
         """Calucalte and returns total usage in all the clusters"""
 
         usage = [0, 0, 0, 0]
-        for v in self.clusters.values():
+        for v in list(self.clusters.values()):
             usage[0] = usage[0]+v[0]
             usage[1] = usage[1]+v[1]
             usage[2] = usage[2]+v[2]

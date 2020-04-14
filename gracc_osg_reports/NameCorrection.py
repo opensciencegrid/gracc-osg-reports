@@ -101,8 +101,8 @@ if __name__ == '__main__':
 
     hd = 'GPGrid'
     n = NameCorrection(hd)
-    print n.get_info()
+    print(n.get_info())
 
     hd2 = 'ruc.ciconnect@uct2-gk.mwt2.org/condor'
     n2 = NameCorrection(hd2)
-    print n2.get_info()
+    print(n2.get_info())

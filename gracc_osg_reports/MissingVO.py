@@ -117,7 +117,7 @@ class MissingVOReporter(ReportUtils.Reporter):
         allterms = copy.copy(unique_terms)
         allterms.extend(metrics)
 
-        print data
+        print(data)
         for entry in data:
             yield [entry[field] for field in allterms]
 
@@ -150,9 +150,9 @@ class MissingVOReporter(ReportUtils.Reporter):
             #    print u"{0}\t{1}\t{2}\t{3}\t{4}".format(*result_list)
             if result_list[0] in authortative_vos:
                 continue
-            mapdict = dict(zip(self.header, result_list))
-            print("Adding bad VO: {}".format(result_list))
-            for key, item in mapdict.iteritems():
+            mapdict = dict(list(zip(self.header, result_list)))
+            print(("Adding bad VO: {}".format(result_list)))
+            for key, item in mapdict.items():
                 report[key].append(item)
 
         
