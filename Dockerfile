@@ -1,4 +1,4 @@
-FROM opensciencegrid/gracc-reporting:2.0.2
+FROM python:3-alpine
 ARG version
 
 RUN apk update \
