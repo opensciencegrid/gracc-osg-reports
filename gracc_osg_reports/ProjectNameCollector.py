@@ -3,7 +3,7 @@
 import sys
 import optparse
 
-from XDProject import XDProject
+from .XDProject import XDProject
 
 __author__ = "Tanya Levshina"
 __email__ = "tlevshin@fnal.gov"
@@ -91,7 +91,7 @@ class ProjectNameCollector:
             xd = XDProject(name, self.config, self.verbose)
             if not xd.execute_query(url_type='project'):
                     # Email Mats about this project.  New method
-                    print "This project is not in XD database ", name
+                    print("This project is not in XD database ", name)
             else:
                 # Put the information in request file, will be sent later
                 self.create_request_to_register_oim(name, source, xd)
@@ -99,7 +99,7 @@ class ProjectNameCollector:
                 self.projects[name] = xd
                 return self.projects[name]
         else:
-            print "This project %s is not registered " % (name,)
+            print("This project %s is not registered " % (name,))
             # Put the information in request file, will be sent later
             self.create_request_to_register_oim(name, source)
         return None
@@ -181,4 +181,4 @@ if __name__ == "__main__":
     opts, args = parse_opts()
     pnc = ProjectNameCollector(config, opts.verbose)
     p = pnc.get_project(args[0], opts.report_type)
-    print p.__dict__
+    print(p.__dict__)

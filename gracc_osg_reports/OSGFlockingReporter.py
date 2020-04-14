@@ -101,10 +101,10 @@ class FlockingReport(ReportUtils.Reporter):
 
         for result_tuple in self.generate():
             if self.verbose:
-                print "{0}\t{1}\t{2}\t{3}\t{4}".format(*result_tuple)
+                print("{0}\t{1}\t{2}\t{3}\t{4}".format(*result_tuple))
 
-            mapdict = dict(zip(self.header, result_tuple))
-            for key, item in mapdict.iteritems():
+            mapdict = dict(list(zip(self.header, result_tuple)))
+            for key, item in mapdict.items():
                 report[key].append(item)
 
         tot = sum(report['Wall Hours'])
@@ -117,7 +117,7 @@ class FlockingReport(ReportUtils.Reporter):
                 report[col].append('')
 
         if self.verbose:
-            print "The total Wall hours in this report are {0}".format(tot)
+            print("The total Wall hours in this report are {0}".format(tot))
 
         return report
 
@@ -138,7 +138,7 @@ def main():
                            logfile=logfile_fname)
 
         f.run_report()
-        print "OSG Flocking Report execution successful"
+        print("OSG Flocking Report execution successful")
     except Exception as e:
         errstring = '{0}: Error running OSG Flocking Report. ' \
                     '{1}'.format(datetime.datetime.now(), traceback.format_exc())

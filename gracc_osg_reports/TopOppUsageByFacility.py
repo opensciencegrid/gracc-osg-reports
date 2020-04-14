@@ -12,7 +12,7 @@ from elasticsearch_dsl import Search
 
 from gracc_reporting import ReportUtils, TimeUtils
 from gracc_reporting.NiceNum import niceNum
-from NameCorrection import NameCorrection
+from .NameCorrection import NameCorrection
 
 
 LOGFILE = 'topoppusage.log'
@@ -75,7 +75,7 @@ class Facility(object):
 
     # Mapping dict to check type of data before it's added to an instance of
     # this class
-    typedict = {'rg': basestring, 'res': basestring, 'entry': dict,
+    typedict = {'rg': str, 'res': str, 'entry': dict,
                 'old_entry': dict}
 
     def __init__(self, name):
@@ -287,13 +287,13 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
 
         # Get prior rank
         for oldrank, f in enumerate(
-                sorted(facilities.itervalues(), key=lambda x: x.oldtotalhours,
+                sorted(iter(facilities.values()), key=lambda x: x.oldtotalhours,
                     reverse=True), start=1):
             f.oldrank = oldrank
 
         if self.verbose:
-            for f in facilities.itervalues():
-                print f.name, f.totalhours
+            for f in facilities.values():
+                print(f.name, f.totalhours)
 
         return
 
@@ -334,7 +334,7 @@ class TopOppUsageByFacility(ReportUtils.Reporter):
         tothrs = 0      # Total of all current period hours
 
         for rank, f in enumerate(
-                sorted(facilities.itervalues(), key=lambda x: x.totalhours,
+                sorted(iter(facilities.values()), key=lambda x: x.totalhours,
                     reverse=True), start=1):    # Creates the ranking here
 
             tothrs += f.totalhours
@@ -446,7 +446,7 @@ def main():
                                   numrank=args.numrank,
                                   logfile=logfile_fname)
         r.run_report()
-        print "Top Opportunistic Usage per Facility Report execution successful"
+        print("Top Opportunistic Usage per Facility Report execution successful")
 
     except Exception as e:
         errstring = '{0}: Error running Top Opportunistic Usage Report. ' \

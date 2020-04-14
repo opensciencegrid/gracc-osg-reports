@@ -7,7 +7,7 @@ from copy import deepcopy
 
 import psycopg2
 
-from ProjectName import ProjectName
+from .ProjectName import ProjectName
 
 
 __author__ = "Tanya Levshina"
@@ -66,9 +66,9 @@ class XDProject(ProjectName):
 
 
         try:
-            print "Trying to run query to XD DB"
+            print("Trying to run query to XD DB")
             connection = psycopg2.connect(**self.get_connection_string())
-            print "Connected to DB"
+            print("Connected to DB")
             cursor = connection.cursor()
             abstract = "n/a"
             cursor.execute("""select distinct p.person_id,first_name,last_name,email_address,organization_name,
@@ -94,7 +94,7 @@ class XDProject(ProjectName):
                 self.set_abstract(rows[0][7])
                 return True
         except:
-            print >> sys.stderr, "Failed to extract information from XD database",traceback.print_stack()
+            print("Failed to extract information from XD database",traceback.print_stack(), file=sys.stderr)
             return False
 
 def parse_opts():
@@ -115,5 +115,5 @@ if __name__ == "__main__":
     opts, args = parse_opts()
     xd = XDProject(args[0], args.config)
     xd.set_info_for_projectname()
-    print "%s, %s, %s, %s, %s, %s, %s" % (xd.get_pi(), xd.get_email(), xd.get_institution(), xd.get_department(),
-                                          xd.get_project_name(), xd.get_fos(), xd.get_abstract())
+    print("%s, %s, %s, %s, %s, %s, %s" % (xd.get_pi(), xd.get_email(), xd.get_institution(), xd.get_department(),
+                                          xd.get_project_name(), xd.get_fos(), xd.get_abstract()))

@@ -1,0 +1,3 @@
+gracc_reporting
+elasticsearch_dsl
+requests
