@@ -53,8 +53,8 @@ chmod a+w ${REPORTLOGFILE}
 # Run the docker command
 docker run \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
-        -v ${LOCALLOGDIR}:/tmp/log
-        opensciencegrid/gracc-osg-reports:latest osgflockingreport \
+        -v ${LOCALLOGDIR}:/tmp/log \
+        opensciencegrid/gracc-osg-reports:derek-test osgflockingreport \
         -s "${starttime}" \
         -e "${endtime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
