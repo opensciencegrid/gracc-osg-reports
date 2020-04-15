@@ -57,7 +57,7 @@ for TYPE in ${REPORT_TYPES}
 do
     echo $TYPE
 
-    docker run --rm \
+    docker run --rm --net=host \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgmissingprojects \
