@@ -57,7 +57,7 @@ echo "START" `date` >> $SCRIPTLOGFILE
     docker run --rm --net=host \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
-        opensciencegrid/gracc-osg-reports:latest osgmissingvoreport \
+        opensciencegrid/gracc-osg-reports:latest osgmissingvo \
         -s "${starttime}" \
         -e "${endtime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
