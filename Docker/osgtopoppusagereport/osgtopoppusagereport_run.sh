@@ -54,9 +54,9 @@ chmod a+w ${REPORTLOGFILE}
 # Run the report container
 echo "START" `date` >> $SCRIPTLOGFILE
 
-docker run \
+docker run --rm \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
-        -v ${LOCALLOGDIR}:/tmp/log
+        -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgtopoppusagereport \
         -s ${starttime} \
         -e ${endtime} \

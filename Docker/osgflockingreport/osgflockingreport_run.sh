@@ -51,7 +51,7 @@ touch ${REPORTLOGFILE}
 chmod a+w ${REPORTLOGFILE}
 
 # Run the docker command
-docker run \
+docker run --rm \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:derek-test osgflockingreport \
