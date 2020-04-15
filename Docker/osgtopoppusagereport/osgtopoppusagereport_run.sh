@@ -58,8 +58,8 @@ docker run --rm \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgtopoppusagereport \
-        -s ${starttime} \
-        -e ${endtime} \
+        -s "${starttime}" \
+        -e "${endtime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
         -N $number \
         -T /tmp/html_templates/template_topoppusage.html

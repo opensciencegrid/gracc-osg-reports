@@ -54,7 +54,7 @@ docker run --rm \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgpersitereport \
-        -s ${starttime} \
+        -s "${starttime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
         -T /tmp/html_templates/template_persite.html
 

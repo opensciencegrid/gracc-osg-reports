@@ -58,8 +58,8 @@ echo "START" `date` >> $SCRIPTLOGFILE
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgmissingvoreport \
-        -s ${starttime} \
-        -e ${endtime} \
+        -s "${starttime}" \
+        -e "${endtime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
         -T /tmp/html_templates/template_project.html
 

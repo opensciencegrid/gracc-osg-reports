@@ -61,8 +61,8 @@ do
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
         opensciencegrid/gracc-osg-reports:latest osgmissingprojects \
-        -s ${starttime} \
-        -e ${endtime} \
+        -s "${starttime}" \
+        -e "${endtime}" \
         -c /tmp/gracc-osg-reports-config/osg.toml \
         -r ${TYPE}
 
