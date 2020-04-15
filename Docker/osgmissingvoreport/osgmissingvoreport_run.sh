@@ -32,31 +32,6 @@ function set_dates {
         echo $starttime
 }
 
-function dc_error_handle {
-        SHELLERROR=$1
-        DCERROR=$2
-        ERRMSG=$3
-        SMSG=$4
-        if [ $SHELLERROR -ne 0 ] || [ $DCERROR -ne 0 ];
-        then
-                ERRCODE=`expr $SHELLERROR + $DCERROR`
-                echo $ERRMSG >> $SCRIPTLOGFILE 
-        else
-                echo $SMSG >> $SCRIPTLOGFILE
-        fi  
-}
-
-function prom_push {
-        # Update Prometheus metrics
-        ${DOCKER_COMPOSE_EXEC} -f ${UPDATEPROMDIR}/docker-compose.yml up 
-        ERR=$?
-        dc_EXITCODE=`${DOCKER_COMPOSE_EXEC} -f ${UPDATEPROMDIR}/docker-compose.yml ps -q | xargs docker inspect -f '{{ .State.ExitCode}}'`
-        MSG="Error updating Prometheus Metrics"
-        SMSG="Updated Prometheus Metrics"
-
-        dc_error_handle $ERR $dc_EXITCODE "$MSG" "$SMSG"
-}
-
 # Initialize everything
 # Check arguments
 
@@ -65,21 +40,8 @@ then
     usage
 fi
 
-# Check for prometheus flag
-if [[ $1 == "-p" ]] ;
-then
-        PUSHPROMMETRICS=1
-        export UPDATEPROMDIR=${TOPDIR}/updateinfo
-        echo "Pushing metrics"
-        shift 
-else
-        PUSHPROMMETRICS=0
-fi
-
-
 set_dates $1
 export endtime=`date +"%F %T"`
-export REPORT_TYPES="XD OSG OSG-Connect"
 
 # Check to see if logdir exists.  Create it if it doesn't
 if [ ! -d "$LOCALLOGDIR" ]; then
@@ -89,33 +51,19 @@ fi
 touch ${REPORTLOGFILE}
 chmod a+w ${REPORTLOGFILE}
 
-# Find docker-compose
-PATH=$PATH:/usr/local/bin
-DOCKER_COMPOSE_EXEC=`which docker-compose`
-
-if [[ $? -ne 0 ]]; 
-then
-        ERRCODE=$?
-        echo "Could not find docker-compose.  Exiting"
-        exit $ERRCODE 
-fi
-
 # Run the report container
 echo "START" `date` >> $SCRIPTLOGFILE
 
-${DOCKER_COMPOSE_EXEC} up
-ERR=$?
-dc_EXITCODE=`${DOCKER_COMPOSE_EXEC} ps -q | xargs docker inspect -f '{{ .State.ExitCode}}'`
-MSG="Error sending report. Please investigate"
-
-dc_error_handle $ERR $dc_EXITCODE "$MSG"
+    docker run \
+        -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
+        -v ${LOCALLOGDIR}:/tmp/log
+        opensciencegrid/gracc-osg-reports:latest osgmissingvoreport \
+        -s ${starttime} \
+        -e ${endtime} \
+        -c /tmp/gracc-osg-reports-config/osg.toml \
+        -T /tmp/html_templates/template_project.html
 
 echo "Sent report" >> $SCRIPTLOGFILE
-
-if [[ $PUSHPROMMETRICS == 1 ]] ;
-then
-        prom_push
-fi
 
 echo "END" `date` >> $SCRIPTLOGFILE
 exit 0
