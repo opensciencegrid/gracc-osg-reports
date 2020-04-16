@@ -10,11 +10,16 @@
             margin:50px 0;
         }}
 
+        table {{
+            clear:both;
+            width:100%;
+        }}
+
         td {{
             border-top: 2px solid #ccc;
         }}
 
-        table#t01 th {{
+        table th {{
             text-align:"center"
             font-weight"bold";
             letter-spacing:1px;
@@ -36,12 +41,7 @@
         </div>
         <div style="width:770px; margin:0 auto; font-family: Helvetica, Arial, sans-serif; font-size: 12px; line-height: 17px;">
             <div style="background:#ee8130; width:100%; padding:15px; margin:10px 0; font-size:20px; line-height:25px;">{title}</div>
-            <table id="t01" cellpadding="7" cellspacing="0" border="0" width="100%" style="clear:both;">
-                <tr>
-                    {header}
-                </tr>
                 {table}
-            </table>
         </div>
     </body>
 </html>

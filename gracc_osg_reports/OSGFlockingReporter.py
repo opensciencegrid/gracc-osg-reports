@@ -31,7 +31,7 @@ class FlockingReport(ReportUtils.Reporter):
         self.title = "OSG Flocking: Usage of OSG Sites for {0} - {1}".format(
             start, end)
 
-        self.header = ["VOName", "SiteName", "ProbeName", "ProjectName",
+        self.header = ["SiteName", "VOName", "ProbeName", "ProjectName",
                        "Wall Hours"]
 
     def run_report(self):
@@ -63,7 +63,7 @@ class FlockingReport(ReportUtils.Reporter):
 
         # Bucket aggs
         Bucket = s.aggs.bucket('group_Site', 'terms', field='SiteName', size=MAXINT) \
-            .bucket('group_VOName', 'terms', field='ReportableVOName', size=MAXINT) \
+            .bucket('group_VOName', 'terms', field='VOName', size=MAXINT) \
             .bucket('group_ProbeName', 'terms', field='ProbeName', size=MAXINT) \
             .bucket('group_ProjectName', 'terms', field='ProjectName', missing='N/A', size=MAXINT)
 
