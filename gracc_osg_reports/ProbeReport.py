@@ -570,7 +570,7 @@ class ProbeReport(ReportUtils.Reporter):
             return
 
         with open(self.emailfile, 'rb') as fp:
-            msg = MIMEText(fp.read())
+            msg = MIMEText(fp.read().decode('utf-8'))
 
         msg['To'] = ', '.join(self.email_info['to']['email'])
         msg['From'] = email.utils.formataddr((self.email_info['from']['name'],
