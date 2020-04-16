@@ -35,7 +35,7 @@ echo "START" `date` >> $SCRIPTLOGFILE
 docker run --rm --net=host \
         -v ${CONFIGDIR}:/tmp/gracc-osg-reports-config \
         -v ${LOCALLOGDIR}:/tmp/log \
-        opensciencegrid/gracc-osg-reports:latest osgpersitereport \
+        opensciencegrid/gracc-osg-reports:latest osgprobereport \
         -c /tmp/gracc-osg-reports-config/osg.toml \
         -S /tmp/log/probereporthistory.log
 
