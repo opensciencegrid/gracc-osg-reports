@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 
 setup(name='gracc-osg-reports',
-      version='3.0.2',
+      version='3.1.0',
       description='OSG GRACC Email Reports',
       author_email='sbhat@fnal.gov',
       author='Shreyas Bhat',
@@ -19,6 +19,7 @@ setup(name='gracc-osg-reports',
               'osgtopoppusagereport = gracc_osg_reports.TopOppUsageByFacility:main',
               'osgmissingprojects = gracc_osg_reports.MissingProject:main',
               'osgmissingvo = gracc_osg_reports.MissingVO:main',
+              'monthlysites = gracc_osg_reports.MonthlySitesViewReporter:main',
               ]
           }
      )

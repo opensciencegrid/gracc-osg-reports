@@ -114,3 +114,8 @@ default_logdir = '/var/log'
     to_emails = ['nobody@example.com', ]
     to_names = ['Recipient Name', ]
     vo_oim_url = 'https://topology.opensciencegrid.org/vosummary/xml'
+
+[monthlysites]
+    index_pattern='gracc.osg.summary'
+    to_emails = ['nobody@example.com', ]
+    to_names = ['Recipient Name', ]
