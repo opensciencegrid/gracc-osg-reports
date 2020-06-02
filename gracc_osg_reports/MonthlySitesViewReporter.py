@@ -144,7 +144,8 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site"], margins=True, margins_name="Totals", fill_value=0.0)
+        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site"], fill_value=0.0)
+        table.columns = table.columns.get_level_values(1)
         return table
 
     def format_report(self):
