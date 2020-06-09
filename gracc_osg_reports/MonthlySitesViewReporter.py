@@ -6,6 +6,8 @@ from collections import defaultdict
 import argparse
 import pandas as pd
 import datetime
+import calendar
+import dateutil.parser
 
 from elasticsearch_dsl import Search
 
@@ -48,7 +50,7 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
                                           end=end,
                                           **kwargs)
         #self.report_type = "MonthlySites"
-        self.title = "Monthly by Site"
+        self.title = "OSG site hours by month as of {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
         self.logger.info("Report Type: {0}".format(self.report_type))
 
     def run_report(self):
@@ -157,6 +159,24 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
 
         table = self.generate_report_file()
 
+        # Figure out the percentage of the month we have completed
+        now = datetime.datetime.now()
+        days_in_month = calendar.monthrange(now.year, now.month)[1]
+        percentage = float(now.day) / float(days_in_month)
+
+        # Convert the headers to just YYYY-MM
+        def date_to_yeardate(date):
+            return date.strftime("%Y-%m")
+
+        results = map(date_to_yeardate, table.columns)
+        table.columns = results
+
+        # Multiply the last full month by the percent completed
+        full_month = table.columns.values.tolist()[-2]
+        multiplied_column = table[table.columns[-2]] * percentage
+        table.insert(len(table.columns)-1, "{} * {:.2f}".format(full_month, percentage), multiplied_column)
+
+        print(table.reset_index().to_csv(index=False))
         return table.reset_index()
 
 
