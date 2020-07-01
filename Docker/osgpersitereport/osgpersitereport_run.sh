@@ -19,11 +19,11 @@ function usage {
 
 function set_dates {
         case $1 in
-                "daily") export starttime=`date --date='1 day ago' +"%F %T"`;;
-                "weekly") export starttime=`date --date='1 week ago' +"%F %T"`;;
-                "bimonthly") export starttime=`date --date='2 month ago' +"%F %T"`;;
-                "monthly") export starttime=`date --date='1 month ago' +"%F %T"`;;
-                "yearly") export starttime=`date --date='1 year ago' +"%F %T"`;;
+                "daily") export starttime=`date --date='1 day ago' +"%F"`;;
+                "weekly") export starttime=`date --date='1 week ago' +"%F"`;;
+                "bimonthly") export starttime=`date --date='2 month ago' +"%F"`;;
+                "monthly") export starttime=`date --date='1 month ago' +"%F"`;;
+                "yearly") export starttime=`date --date='1 year ago' +"%F"`;;
                 *) echo "Error: unknown period $1. Use weekly, monthly or yearly"
                          exit 1;;
         esac
