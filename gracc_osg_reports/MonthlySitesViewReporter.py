@@ -161,7 +161,7 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
         table = self.generate_report_file()
 
         # Figure out the percentage of the month we have completed
-        now = self.end_time
+        now = datetime.datetime.now()
         days_in_month = calendar.monthrange(now.year, now.month)[1]
 
         # Scale up the partial month to the full month
@@ -176,10 +176,11 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
 
         # Multiply the partial month by the percentage
         partial_month = table.columns.values.tolist()[-1]
-        multiplied_column = table[table.columns[-1]] * percentage
-        table.insert(len(table.columns), "{} * {:.2f}".format(partial_month, percentage), multiplied_column)
+        table[table.columns[-1]] = table[table.columns[-1]] * percentage
+        table = table.rename(columns= {partial_month:"{} * {:.2f}".format(partial_month, percentage)})
+        #table.insert(len(table.columns), "{} * {:.2f}".format(partial_month, percentage), multiplied_column)
 
-        print(table.reset_index().to_csv(index=False))
+        #print(table.reset_index().to_csv(index=False))
         return table.reset_index()
 
 
