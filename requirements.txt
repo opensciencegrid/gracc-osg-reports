@@ -1,3 +1,5 @@
 gracc-reporting
 elasticsearch_dsl
 requests
+numpy
+pandas

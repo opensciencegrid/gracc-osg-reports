@@ -5,6 +5,7 @@ import copy
 from collections import defaultdict
 import argparse
 import pandas as pd
+import numpy as np
 import datetime
 import calendar
 import dateutil.parser
@@ -50,7 +51,7 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
                                           end=end,
                                           **kwargs)
         #self.report_type = "MonthlySites"
-        self.title = "OSG site hours by month as of {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
+        self.title = "OSG site pilot hours across all VOs by month as of {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
         self.logger.info("Report Type: {0}".format(self.report_type))
 
     def run_report(self):
@@ -146,7 +147,7 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site"], fill_value=0.0)
+        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site"], fill_value=0.0, aggfunc=np.sum)
         table.columns = table.columns.get_level_values(1)
         return table
 
@@ -162,7 +163,9 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
         # Figure out the percentage of the month we have completed
         now = datetime.datetime.now()
         days_in_month = calendar.monthrange(now.year, now.month)[1]
-        percentage = float(now.day) / float(days_in_month)
+
+        # Scale up the partial month to the full month
+        percentage = float(days_in_month) / float(now.day)
 
         # Convert the headers to just YYYY-MM
         def date_to_yeardate(date):
@@ -171,12 +174,13 @@ class OSGMonthlySitesViewReporter(ReportUtils.Reporter):
         results = map(date_to_yeardate, table.columns)
         table.columns = results
 
-        # Multiply the last full month by the percent completed
-        full_month = table.columns.values.tolist()[-2]
-        multiplied_column = table[table.columns[-2]] * percentage
-        table.insert(len(table.columns)-1, "{} * {:.2f}".format(full_month, percentage), multiplied_column)
+        # Multiply the partial month by the percentage
+        partial_month = table.columns.values.tolist()[-1]
+        table[table.columns[-1]] = table[table.columns[-1]] * percentage
+        table = table.rename(columns= {partial_month:"{} * {:.2f}".format(partial_month, percentage)})
+        #table.insert(len(table.columns), "{} * {:.2f}".format(partial_month, percentage), multiplied_column)
 
-        print(table.reset_index().to_csv(index=False))
+        #print(table.reset_index().to_csv(index=False))
         return table.reset_index()
 
 
