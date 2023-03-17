@@ -9,6 +9,7 @@ import numpy as np
 import datetime
 import calendar
 import dateutil.parser
+import requests
 
 from elasticsearch_dsl import Search
 
@@ -53,6 +54,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         #self.report_type = "MonthlySites"
         self.title = "OSG Payload and Pilot hours per site {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
         self.logger.info("Report Type: {0}".format(self.report_type))
+        self.sites = None
 
     def run_report(self):
         """Higher level method to handle the process flow of the report
@@ -85,10 +87,32 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
             curBucket = curBucket.bucket(term, 'terms', field=term, size=(2**31)-1)
 
         for metric in metrics:
-            curBucket.metric(metric, 'sum', field=metric)
+            curBucket.metric(metric, 'sum', field=metric, missing=0)
         
 
         return s
+
+
+    def download_sites(self) -> list:
+        """Downloads the list of sites from github raw and parses it
+
+        :return list: List of sites
+        """
+        # Download the list of sites from github raw and parse it
+        if self.sites is not None:
+            return self.sites
+        self.sites = []
+        sites_url = self.config[self.report_type.lower()]['sites_url']
+        response = requests.get(sites_url)
+        if response.status_code == 200:
+            lines = response.text.splitlines()
+            for line in lines:
+                if line.startswith("#"):
+                    continue
+                self.sites.append(line.strip())
+        else:
+            self.logger.error("Unable to download sites from github.  Status code: {}".format(response.status_code))
+        return self.sites
 
 
     def generate_report_file(self):
@@ -97,8 +121,8 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         
         # These could probably be combined into one query, but I'm not sure how to do that
         # Or these could be farmed out to separate threads or processes
-        sites = []
-        sites = self.config[self.report_type.lower()]['sites']
+        sites = self.download_sites()
+        #sites = self.config[self.report_type.lower()]['sites']
         response_payload = self.query("Payload", sites).execute()
         response_pilot = self.query("Batch", sites).execute()
 
@@ -157,16 +181,31 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
             temp_df = pd.DataFrame(data)
             df_pilot = pd.concat([df_pilot, temp_df], axis=0)
 
-        df_payload['OIM_Site'] = df_payload['OIM_Site'].map(lambda name: name + " (Payload)")
-        df_pilot['OIM_Site'] = df_pilot['OIM_Site'].map(lambda name: name + " (Pilot)")
+        #df_payload['OIM_Site'] = df_payload['OIM_Site'].map(lambda name: name + " (Payload)")
+        #df_pilot['OIM_Site'] = df_pilot['OIM_Site'].map(lambda name: name + " (Pilot)")
+
+        # Add a column for payload or pilot
+        df_payload['ResourceType'] = "Payload"
+        df_pilot['ResourceType'] = "Pilot"
+
         # Convert to datetime, and remove everything but the date, no time needed
         df = pd.concat([df_payload, df_pilot], axis=0)
         df['EndTime'] = pd.to_datetime(df['EndTime'])
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site"], fill_value=0.0, aggfunc=np.sum)
+        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+
+        # Check for missing sites, add them if necessary:
+        for site in sites:
+            for resource_type in ["Payload", "Pilot"]:
+                if (site, resource_type) not in table.index:
+                    # Append a row to the table
+                    ser = pd.Series(name=(site, resource_type), dtype=np.float64, data=np.full(table.shape[1], 0.0), index=table.columns)
+                    table = table.append(ser)
+
         table.columns = table.columns.get_level_values(1)
+        
         return table
 
     def format_report(self):
@@ -181,12 +220,45 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         # Truncate the decimals in the columns
         table = table.applymap(lambda x: round(x))
 
+        # Sort the table
+        table.sort_values(by=["OIM_Site", "ResourceType"], ascending=[True, False], inplace=True)
+
+        # Add a blank row between each site
+        # Calculate the total size of the new dataframe, 1 new row for each 2 existing rows
+        new_size = len(table) + len(table)/2
+
+        # Create a new dataframe with the new size
+        table.reset_index(inplace=True)
+        new_index = pd.RangeIndex(start=0, stop=new_size, step=1)
+        new_df = pd.DataFrame(np.nan, index=new_index, columns=table.columns)
+
+        # A function to perform the following mapping to add a blank line between each site:
+        # 0 -> 0
+        # 1 -> 1
+        # 2 -> 3
+        # 3 -> 4
+        # 4 -> 6
+        # 5 -> 7
+        next_row = 0
+        for i in range(0, len(table), 2):
+            new_df.loc[next_row] = table.iloc[i]
+            new_df.loc[next_row+1] = table.iloc[i+1]
+            new_df.loc[next_row+2] = np.nan
+            next_row += 3
+
+        table = new_df
+
         # Convert the headers to just MM-DD
         def date_to_monthdate(date):
+            if isinstance(date, str):
+                return date
             return date.strftime("%m-%d")
 
         results = map(date_to_monthdate, table.columns)
         table.columns = results
+
+        # Set the index to the OIM_Site and ResourceType
+        table.set_index(["OIM_Site", "ResourceType"], inplace=True)
 
         # Create the report
 
