@@ -1,3 +1,6 @@
+# Lines that begin with "#" are ignored.
+# Each line is a OIM_Site from GRACC.  If the site doesn't exist, it will report all 0's
+# 
 AMNH
 Arkansas State University
 Creighton University
