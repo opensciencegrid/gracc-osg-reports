@@ -78,7 +78,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         s = s.query('match', ResourceType=record_type)
 
         unique_terms = ["EndTime", "OIM_Site"]
-        metrics = ["CoreHours"]
+        metrics = ["CoreHours", "Njobs"]
 
         curBucket = s.aggs.bucket(unique_terms[0], 'date_histogram', field=unique_terms[0], interval="day")
         new_unique_terms = unique_terms[1:]
@@ -127,7 +127,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         response_pilot = self.query("Batch", sites).execute()
 
         unique_terms = ["EndTime", "OIM_Site"]
-        metrics = ["CoreHours"]
+        metrics = ["CoreHours", "Njobs"]
 
         def recurseBucket(curData, curBucket, index, data):
             """
@@ -186,7 +186,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
 
         # Add a column for payload or pilot
         df_payload['ResourceType'] = "Payload"
-        df_pilot['ResourceType'] = "Pilot"
+        df_pilot['ResourceType'] = "Batch"
 
         # Convert to datetime, and remove everything but the date, no time needed
         df = pd.concat([df_payload, df_pilot], axis=0)
@@ -194,17 +194,40 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+        hours_table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+        hours_table.columns = hours_table.columns.droplevel(0)
+        hours_table['Values'] = "Hours"
+
+        # And with the number of jobs as well
+        jobs_table = pd.pivot_table(df, columns=["EndTime"], values=["Njobs"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+        jobs_table.columns = jobs_table.columns.droplevel(0)
+        jobs_table['Values'] = "#Jobs"
+
+        # Concatenate the two tables
+        table = pd.concat([hours_table, jobs_table], axis=0)
+
+        print(table)
+        table.to_csv("test.csv")
+
+        # Add the Values to the index
+        table.set_index(['Values'], append=True, inplace=True)
+
+        # Add a sum and average column
+        sum_col = table.sum(axis=1)
+        mean_col = table.mean(axis=1, numeric_only=True, skipna=True)
+        table['Sum'] = sum_col
+        table['Average'] = mean_col
+        print(mean_col)
 
         # Check for missing sites, add them if necessary:
         for site in sites:
-            for resource_type in ["Payload", "Pilot"]:
-                if (site, resource_type) not in table.index:
-                    # Append a row to the table
-                    ser = pd.Series(name=(site, resource_type), dtype=np.float64, data=np.full(table.shape[1], 0.0), index=table.columns)
-                    table = table.append(ser)
+            for resource_type in ["Payload", "Batch"]:
+                for values_type in ["Hours", "#Jobs"]:
+                    if (site, resource_type, values_type) not in table.index:
+                        # Append a row to the table
+                        ser = pd.Series(name=(site, resource_type, values_type), data=np.full(table.shape[1], "-"), index=table.columns)
+                        table = table.append(ser)
 
-        table.columns = table.columns.get_level_values(1)
         
         return table
 
@@ -218,14 +241,19 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         table = self.generate_report_file()
         
         # Truncate the decimals in the columns
-        table = table.applymap(lambda x: round(x))
+        table = table.applymap(lambda x: round(x) if isinstance(x, float) and not pd.isnull(x) else x)
 
-        # Sort the table
-        table.sort_values(by=["OIM_Site", "ResourceType"], ascending=[True, False], inplace=True)
+        # Sort the table first by site, then by resource type
+        # This will put the Batch rows after the Payload rows
+        # The first sort is mostly just to order to the resourceType column
+        table.sort_values(by=["OIM_Site", "Values", "ResourceType"], ascending=[True, True, True], inplace=True)
+
+        # Reindex the table to put the sites in the order from the downloaded sites file
+        table = table.reindex(self.download_sites(), level=0)
 
         # Add a blank row between each site
         # Calculate the total size of the new dataframe, 1 new row for each 2 existing rows
-        new_size = len(table) + len(table)/2
+        new_size = len(table) + int(len(table)/4)
 
         # Create a new dataframe with the new size
         table.reset_index(inplace=True)
@@ -235,16 +263,18 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         # A function to perform the following mapping to add a blank line between each site:
         # 0 -> 0
         # 1 -> 1
-        # 2 -> 3
-        # 3 -> 4
-        # 4 -> 6
-        # 5 -> 7
+        # 2 -> 2
+        # 3 -> 3
+        # 4 -> 5
+        # 5 -> 6
+        # There has got to be a better algorithm for this, but I can't think of one
         next_row = 0
-        for i in range(0, len(table), 2):
-            new_df.loc[next_row] = table.iloc[i]
-            new_df.loc[next_row+1] = table.iloc[i+1]
-            new_df.loc[next_row+2] = np.nan
-            next_row += 3
+        for i in range(0, len(table), 4):
+            # Copy the 4 rows from the old table to the new table
+            for j in range(4):
+                new_df.loc[next_row+j] = table.iloc[i+j]
+            new_df.loc[next_row+4] = np.nan
+            next_row += 5
 
         table = new_df
 
@@ -258,7 +288,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         table.columns = results
 
         # Set the index to the OIM_Site and ResourceType
-        table.set_index(["OIM_Site", "ResourceType"], inplace=True)
+        table.set_index(["OIM_Site", "ResourceType", "Values"], inplace=True)
 
         # Create the report
 
