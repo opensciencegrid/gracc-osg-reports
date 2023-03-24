@@ -15,7 +15,7 @@ from elasticsearch_dsl import Search
 
 from gracc_reporting import ReportUtils
 
-LOGFILE = 'osgmonthlysites.log'
+LOGFILE = 'osgpayloadandbatch.log'
 MAXINT = 2**31 - 1
 
 
@@ -206,9 +206,6 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         # Concatenate the two tables
         table = pd.concat([hours_table, jobs_table], axis=0)
 
-        print(table)
-        table.to_csv("test.csv")
-
         # Add the Values to the index
         table.set_index(['Values'], append=True, inplace=True)
 
@@ -217,7 +214,6 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         mean_col = table.mean(axis=1, numeric_only=True, skipna=True)
         table['Sum'] = sum_col
         table['Average'] = mean_col
-        print(mean_col)
 
         # Check for missing sites, add them if necessary:
         for site in sites:
@@ -311,7 +307,7 @@ def main():
                         logfile=logfile_fname,
                         template=args.template)
         r.run_report()
-        r.logger.info("OSG Project Report executed successfully")
+        r.logger.info("OSG Payload and Batch Report executed successfully")
 
     except Exception as e:
         ReportUtils.runerror(args.config, e, traceback.format_exc(), args.logfile)
