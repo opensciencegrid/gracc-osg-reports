@@ -119,3 +119,12 @@ default_logdir = '/var/log'
     index_pattern='gracc.osg.summary'
     to_emails = ['nobody@example.com', ]
     to_names = ['Recipient Name', ]
+
+
+[payloadandpilot]
+    index_pattern='gracc.osg.summary'
+    to_emails = ['nobody@example.com', ]
+    to_names = ['Recipient Name', ]
+    sites_url = "https://raw.githubusercontent.com/opensciencegrid/gracc-osg-reports/master/config/payload-pilot-sites.txt"
+
+
