@@ -1,9 +1,34 @@
 # Lines that begin with "#" are ignored.
 # Each line is a OIM_Site from GRACC.  If the site doesn't exist, it will report all 0's
-# 
+#
+# CC* Active
+Kansas State University
+Louisiana State University Health Sciences Center
+New Mexico State Discovery
+University of Alabama
+University of Colorado Denver
+Maine-ACG
+Center for Advanced Research Computing
+University of Washington Research Computing
+AUGIE UC
+WTAMU_HPC
+# CC* Alumni
 AMNH
-Arkansas State University
-Creighton University
-Dakota State University
+Clarkson - ACRES
+FANDM-ITS
+Georgia Tech
+Lehigh - Hawk
+LSU - Deep Bayou
+PDX-OIT
+Purdue Geddes
+Rhodes-HPC
+Rice-CRC
 SIUE - CC
-Does Not Exist
+SU ITS
+TCNJ-ELSA
+Tufts - Cluster
+CU - Research Computing
+UConn-HPC
+ND_CAML
+UTC - Epyc
+WSU - GRID_ce2
