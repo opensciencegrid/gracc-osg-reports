@@ -1,7 +1,8 @@
 FROM python:3-slim
 ARG version
 
-RUN apt-get update && apt-get install -y git libpq-dev gcc
+RUN apt-get update
+# && apt-get install -y git libpq-dev gcc
 
 ADD . /gracc-osg-reports
 WORKDIR /gracc-osg-reports
