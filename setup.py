@@ -3,13 +3,13 @@ import sys
 from setuptools import setup
 
 setup(name='gracc-osg-reports',
-      version='3.2.0',
+      version='3.3.0',
       description='OSG GRACC Email Reports',
       author_email='sbhat@fnal.gov',
       author='Shreyas Bhat',
       url='https://github.com/opensciencegrid/gracc-reporting',
       packages=['gracc_osg_reports'],
-      install_requires=['gracc_reporting', 'elasticsearch_dsl', 'psycopg2', 'requests',],
+      install_requires=['gracc_reporting', 'elasticsearch_dsl', 'requests', 'pandas'],
       entry_points={
           'console_scripts': [
               'osgflockingreport = gracc_osg_reports.OSGFlockingReporter:main',
@@ -20,6 +20,7 @@ setup(name='gracc-osg-reports',
               'osgmissingprojects = gracc_osg_reports.MissingProject:main',
               'osgmissingvo = gracc_osg_reports.MissingVO:main',
               'monthlysites = gracc_osg_reports.MonthlySitesViewReporter:main',
+              'payloadbatchreport = gracc_osg_reports.PayloadAndPilotHours:main',
               ]
           }
      )
