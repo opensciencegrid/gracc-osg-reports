@@ -25,7 +25,7 @@ Rhodes-HPC
 Rice-CRC
 SIUE - CC
 SU ITS
-TCNJ-ELSA
+TCNJ - ELSA
 Tufts - Cluster
 CU - Research Computing
 UConn-HPC
