@@ -288,7 +288,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
 
         # Create the report
 
-        return table
+        return table.reset_index()
 
 
 
