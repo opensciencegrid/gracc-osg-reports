@@ -2,6 +2,7 @@
 # Each line is a OIM_Site from GRACC.  If the site doesn't exist, it will report all 0's
 #
 # CC* Active
+ASU Research Computing
 Kansas State University
 Louisiana State University Health Sciences Center
 New Mexico State Discovery
