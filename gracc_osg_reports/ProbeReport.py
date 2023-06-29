@@ -235,6 +235,10 @@ class OIMInfo(object):
         """Take the RG XML file and get relevant information, store it in class
         structures"""
         self.root = self.parse()
+
+        def _is_true(text):
+            return isinstance(text, str) and text.lower().strip() == "true"
+
         for resourcename_elt in self.root.findall('./ResourceGroup/Resources/Resource'
                                              '/Name'):
             resourcename = resourcename_elt.text
@@ -242,13 +246,13 @@ class OIMInfo(object):
             # Check that resource is active
             activepath = './ResourceGroup/Resources/Resource/' \
                          '[Name="{0}"]/Active'.format(resourcename)
-            if not ast.literal_eval(self.root.find(activepath).text):
+            if not _is_true(self.root.find(activepath).text):
                 continue
 
             # Skip if resource is disabled
             disablepath = './ResourceGroup/Resources/Resource/' \
                          '[Name="{0}"]/Disable'.format(resourcename)
-            if ast.literal_eval(self.root.find(disablepath).text):
+            if not _is_true(self.root.find(disablepath).text):
                 continue
 
             if resourcename not in self.resourcedict:
