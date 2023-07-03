@@ -3,23 +3,20 @@
 #
 # CC* Active
 ASU Research Computing
-Kansas State University
-Louisiana State University Health Sciences Center
-New Mexico State Discovery
-University of Alabama
-University of Colorado Denver
 Maine-ACG
 Center for Advanced Research Computing
 University of Washington Research Computing
-AUGIE UC
 WTAMU_HPC
 # CC* Alumni
 AMNH
 Clarkson - ACRES
 FANDM-ITS
 Georgia Tech
+Kansas State University
 Lehigh - Hawk
 LSU - Deep Bayou
+Louisiana State University Health Sciences Center
+New Mexico State Discovery
 PDX-OIT
 Purdue Geddes
 Rhodes-HPC
@@ -28,8 +25,11 @@ SIUE - CC
 SU ITS
 TCNJ - ELSA
 Tufts - Cluster
+University of Alabama
 CU - Research Computing
+University of Colorado Denver
 UConn-HPC
 ND_CAML
 UTC - Epyc
+AUGIE UC
 WSU - GRID_ce2
