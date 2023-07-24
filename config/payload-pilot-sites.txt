@@ -3,6 +3,8 @@
 #
 # CC* Active
 ASU Research Computing
+ORU - Computing Group
+PSU LIGO
 Maine-ACG
 Center for Advanced Research Computing
 University of Washington Research Computing
