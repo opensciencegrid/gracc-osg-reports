@@ -6,8 +6,6 @@ ASU Research Computing
 ORU - Computing Group
 PSU LIGO
 Maine-ACG
-Center for Advanced Research Computing
-University of Washington Research Computing
 WTAMU_HPC
 # CC* Alumni
 AMNH
@@ -31,7 +29,10 @@ University of Alabama
 CU - Research Computing
 University of Colorado Denver
 UConn-HPC
+UMontana IT
 ND_CAML
+Center for Advanced Research Computing
 UTC - Epyc
+University of Washington Research Computing
 AUGIE UC
 WSU - GRID_ce2
