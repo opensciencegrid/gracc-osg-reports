@@ -6,7 +6,6 @@ ASU Research Computing
 ORU - Computing Group
 PSU LIGO
 Maine-ACG
-WTAMU_HPC
 # CC* Alumni
 AMNH
 Clarkson - ACRES
