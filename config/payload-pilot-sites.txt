@@ -3,6 +3,7 @@
 #
 # CC* Active
 ASU Research Computing
+Kent State Research
 ORU - Computing Group
 PSU LIGO
 Maine-ACG
