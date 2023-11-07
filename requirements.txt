@@ -3,3 +3,4 @@ elasticsearch_dsl
 requests
 numpy
 pandas
+pyyaml

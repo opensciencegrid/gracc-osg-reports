@@ -10,6 +10,7 @@ import datetime
 import calendar
 import dateutil.parser
 import requests
+import yaml
 
 from elasticsearch_dsl import Search
 
@@ -55,6 +56,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         self.title = "OSG Payload and Pilot hours per site {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
         self.logger.info("Report Type: {0}".format(self.report_type))
         self.sites = None
+        self.overrides = {}
 
     def run_report(self):
         """Higher level method to handle the process flow of the report
@@ -76,6 +78,9 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         s = s.filter('range', **{'EndTime': {'from': from_date, 'to': to_date }}) \
              .filter('terms', OIM_Site=sites)
         s = s.query('match', ResourceType=record_type)
+
+        # Limit to the osg vo.
+        s = s.query('match', VOName='osg')
 
         unique_terms = ["EndTime", "OIM_Site"]
         metrics = ["CoreHours", "Njobs"]
@@ -102,14 +107,24 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         if self.sites is not None:
             return self.sites
         self.sites = []
+        self.overrides = {}
         sites_url = self.config[self.report_type.lower()]['sites_url']
         response = requests.get(sites_url)
+        print(response)
         if response.status_code == 200:
-            lines = response.text.splitlines()
-            for line in lines:
-                if line.startswith("#"):
+            # We got the sites config, parse it as yaml
+            sites_config = yaml.safe_load(response.text)
+
+            # sites is just a list of the keys
+            self.sites = list(sites_config.keys())
+
+            # But, we have to loop through all the sites looking for name_overrides
+            for site in sites_config.keys():
+                if sites_config[site] == None:
                     continue
-                self.sites.append(line.strip())
+                if 'name_override' in sites_config[site]:
+                    self.overrides[site] = sites_config[site]['name_override']
+
         else:
             self.logger.error("Unable to download sites from github.  Status code: {}".format(response.status_code))
         return self.sites
@@ -285,6 +300,9 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
 
         # Set the index to the OIM_Site and ResourceType
         table.set_index(["OIM_Site", "ResourceType", "Values"], inplace=True)
+
+        # Convert the sites (first column) using the overrides dictionary
+        table.rename(index=self.overrides, level=0, inplace=True)
 
         # Create the report
 
