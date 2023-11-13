@@ -25,6 +25,7 @@ Rhodes-HPC:
 Rice-CRC:
 SIUE - CC:
 SU ITS:
+  name_override: Syracuse University
 TCNJ - ELSA:
 Tufts - Cluster:
 University of Alabama:
@@ -38,4 +39,6 @@ Center for Advanced Research Computing:
 UTC - Epyc:
 University of Washington Research Computing:
 AUGIE UC:
+  name_override: Villanova University
 WSU - GRID_ce2:
+  name_override: Wayne State University
