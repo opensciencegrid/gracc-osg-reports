@@ -12,6 +12,9 @@ import dateutil.parser
 import requests
 import yaml
 
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 from elasticsearch_dsl import Search
 
 from gracc_reporting import ReportUtils
@@ -110,7 +113,6 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         self.overrides = {}
         sites_url = self.config[self.report_type.lower()]['sites_url']
         response = requests.get(sites_url)
-        print(response)
         if response.status_code == 200:
             # We got the sites config, parse it as yaml
             sites_config = yaml.safe_load(response.text)
@@ -209,12 +211,12 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        hours_table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+        hours_table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc='sum')
         hours_table.columns = hours_table.columns.droplevel(0)
         hours_table['Values'] = "Hours"
 
         # And with the number of jobs as well
-        jobs_table = pd.pivot_table(df, columns=["EndTime"], values=["Njobs"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc=np.sum)
+        jobs_table = pd.pivot_table(df, columns=["EndTime"], values=["Njobs"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc='sum')
         jobs_table.columns = jobs_table.columns.droplevel(0)
         jobs_table['Values'] = "#Jobs"
 
@@ -230,6 +232,8 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         table['Sum'] = sum_col
         table['Average'] = mean_col
 
+        tmp_index_names = table.index.names
+
         # Check for missing sites, add them if necessary:
         for site in sites:
             for resource_type in ["Payload", "Batch"]:
@@ -237,9 +241,9 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
                     if (site, resource_type, values_type) not in table.index:
                         # Append a row to the table
                         ser = pd.Series(name=(site, resource_type, values_type), data=np.full(table.shape[1], "-"), index=table.columns)
-                        table = table.append(ser)
+                        table = pd.concat([table, pd.DataFrame([ser])])
 
-        
+        table.index.set_names(tmp_index_names, inplace=True)
         return table
 
     def format_report(self):
