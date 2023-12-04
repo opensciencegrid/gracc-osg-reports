@@ -6,6 +6,8 @@
 # CC* Active
 ASU Research Computing:
 Kent State Research:
+University of Nevada Reno:
+  name_override: Nevada System (U. Nevada Reno)
 ORU - Computing Group:
 PSU LIGO:
 Maine-ACG:
@@ -42,3 +44,9 @@ AUGIE UC:
   name_override: Villanova University
 WSU - GRID_ce2:
   name_override: Wayne State University
+# Others
+Clemson-Palmetto:
+  name_override: Clemson University
+FSU_HNPGRID:
+  name_override: Florida State University
+University of South Dakota:
