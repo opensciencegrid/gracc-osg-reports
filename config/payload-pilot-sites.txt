@@ -6,6 +6,8 @@
 # CC* Active
 ASU Research Computing:
 Kent State Research:
+MSU ICER:
+  name_override: Michigan State University (ICER)
 University of Nevada Reno:
   name_override: Nevada System (U. Nevada Reno)
 ORU - Computing Group:
