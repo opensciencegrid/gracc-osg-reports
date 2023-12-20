@@ -51,4 +51,6 @@ Clemson-Palmetto:
   name_override: Clemson University
 FSU_HNPGRID:
   name_override: Florida State University
+North Dakota CRC:
+  name_override: University of North Dakota
 University of South Dakota:
