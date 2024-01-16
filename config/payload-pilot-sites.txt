@@ -2,8 +2,10 @@
 # Each line is a OIM_Site from GRACC.  If the site doesn't exist, it will report all 0's
 # For each site, you can optionally add an attribite, name_override, to override the site
 # name in the final report.
-#
+
+# --------------------------------------------------------------
 # CC* Active
+# --------------------------------------------------------------
 ASU Research Computing:
 Kent State Research:
 MSU ICER:
@@ -13,7 +15,11 @@ University of Nevada Reno:
 ORU - Computing Group:
 PSU LIGO:
 Maine-ACG:
+Michigan HORUS:
+
+# --------------------------------------------------------------
 # CC* Alumni
+# --------------------------------------------------------------
 AMNH:
 Clarkson - ACRES:
 FANDM-ITS:
@@ -46,7 +52,10 @@ AUGIE UC:
   name_override: Villanova University
 WSU - GRID_ce2:
   name_override: Wayne State University
+
+# --------------------------------------------------------------
 # Others
+# --------------------------------------------------------------
 Clemson-Palmetto:
   name_override: Clemson University
 FSU_HNPGRID:
