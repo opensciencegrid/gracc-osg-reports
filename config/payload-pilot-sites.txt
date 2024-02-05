@@ -8,11 +8,16 @@
 # --------------------------------------------------------------
 ASU Research Computing:
 Kent State Research:
+LU-CCRE:
+  name_override: Langston University (LU-CCRE Lion)
 MSU ICER:
   name_override: Michigan State University (ICER)
+Montana State RCI:
+  name_override: Montana State University (RCI)
 University of Nevada Reno:
   name_override: Nevada System (U. Nevada Reno)
 ORU - Computing Group:
+  name_override: Oral Roberts University (Titan)
 PSU LIGO:
 Maine-ACG:
 Michigan HORUS:
