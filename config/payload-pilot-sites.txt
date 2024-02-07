@@ -9,7 +9,7 @@
 ASU Research Computing:
 Kent State Research:
 LU-CCRE:
-  name_override: Langston University (LU-CCRE Lion)
+  name_override: 'Langston University (LU-CCRE Lion)'
 MSU ICER:
   name_override: Michigan State University (ICER)
 Montana State RCI:
@@ -48,9 +48,11 @@ CU - Research Computing:
 University of Colorado Denver:
 UConn-HPC:
 UMontana IT:
+  name_override: 'University of Montana (IT) - Hellgate'
 ND_CAML:
+  name_override: 'University of Notre Dame (CRC) - CAML'
 Center for Advanced Research Computing:
-    name_override: University of Southern California
+  name_override: University of Southern California
 UTC - Epyc:
 University of Washington Research Computing:
 AUGIE UC:
