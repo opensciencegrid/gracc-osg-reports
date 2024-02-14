@@ -21,6 +21,8 @@ ORU - Computing Group:
 PSU LIGO:
 Maine-ACG:
 Michigan HORUS:
+Hawaii ITS:
+  name_override: 'University of Hawaii (ITS) - Koa'
 
 # --------------------------------------------------------------
 # CC* Alumni
