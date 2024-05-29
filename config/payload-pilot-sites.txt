@@ -8,8 +8,6 @@
 # --------------------------------------------------------------
 ASU Research Computing:
 Kent State Research:
-LU-CCRE:
-  name_override: 'Langston University (LU-CCRE Lion)'
 MSU ICER:
   name_override: Michigan State University (ICER)
 Montana State RCI:
@@ -32,6 +30,8 @@ Clarkson - ACRES:
 FANDM-ITS:
 Georgia Tech:
 Kansas State University:
+LU-CCRE:
+  name_override: 'Langston University (LU-CCRE) - Lion'
 Lehigh - Hawk:
 LSU - Deep Bayou:
 Louisiana State University Health Sciences Center:
