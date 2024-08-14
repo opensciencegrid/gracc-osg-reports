@@ -16,18 +16,21 @@ University of Nevada Reno:
   name_override: Nevada System (U. Nevada Reno)
 ORU - Computing Group:
   name_override: Oral Roberts University (Titan)
-PSU LIGO:
-Maine-ACG:
+Tennessee Tech ITS:
+  name_override: 'Tennessee Tech (ITS) - Warp1'
+UAH - CSPAR:
+  name_override: 'U. Alabama Huntsville (CSPAR) - Voyager'
 Michigan HORUS:
-Hawaii ITS:
-  name_override: 'University of Hawaii (ITS) - Koa'
 
 # --------------------------------------------------------------
 # CC* Alumni
 # --------------------------------------------------------------
 AMNH:
 Clarkson - ACRES:
+TCNJ - ELSA:
+  name_override: 'College of New Jersey'
 FANDM-ITS:
+  name_override: 'Franklin & Marshall College'
 Georgia Tech:
 Kansas State University:
 LU-CCRE:
@@ -36,6 +39,7 @@ Lehigh - Hawk:
 LSU - Deep Bayou:
 Louisiana State University Health Sciences Center:
 New Mexico State Discovery:
+PSU LIGO:
 PDX-OIT:
 Purdue Geddes:
 Rhodes-HPC:
@@ -43,12 +47,15 @@ Rice-CRC:
 SIUE - CC:
 SU ITS:
   name_override: Syracuse University
-TCNJ - ELSA:
 Tufts - Cluster:
 University of Alabama:
 CU - Research Computing:
 University of Colorado Denver:
 UConn-HPC:
+Hawaii ITS:
+  name_override: 'University of Hawaii (ITS) - Koa'
+Maine-ACG:
+  name_override: 'University of Maine System'
 UMontana IT:
   name_override: 'University of Montana (IT) - Hellgate'
 ND_CAML:
