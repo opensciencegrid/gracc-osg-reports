@@ -7,6 +7,7 @@
 # CC* Active
 # --------------------------------------------------------------
 ASU Research Computing:
+  name_override: 'Arizona State University (RC) - Sol'
 Kent State Research:
 MSU ICER:
   name_override: Michigan State University (ICER)
@@ -19,13 +20,15 @@ ORU - Computing Group:
 Tennessee Tech ITS:
   name_override: 'Tennessee Tech (ITS) - Warp1'
 UAH - CSPAR:
-  name_override: 'U. Alabama Huntsville (CSPAR) - Voyager'
+  name_override: 'U. of Alabama in Huntsville (CSPAR) - Voyager'
 Michigan HORUS:
+  name_override: 'University of Michigan–Ann Arbor - HORUS'
 
 # --------------------------------------------------------------
 # CC* Alumni
 # --------------------------------------------------------------
 AMNH:
+  name_override: 'American Museum of Natural History'
 Clarkson - ACRES:
 TCNJ - ELSA:
   name_override: 'College of New Jersey'
@@ -41,6 +44,7 @@ Louisiana State University Health Sciences Center:
 New Mexico State Discovery:
 PSU LIGO:
 PDX-OIT:
+  name_override: 'Portland State University'
 Purdue Geddes:
 Rhodes-HPC:
 Rice-CRC:
