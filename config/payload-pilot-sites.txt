@@ -68,6 +68,8 @@ Center for Advanced Research Computing:
   name_override: University of Southern California
 UTC - Epyc:
 University of Washington Research Computing:
+UWM-Mortimer:
+  name_override: 'University of Wisconsin–Milwaukee (RC) - Mortimer'
 AUGIE UC:
   name_override: Villanova University
 WSU - GRID_ce2:
