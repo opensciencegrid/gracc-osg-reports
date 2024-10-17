@@ -9,18 +9,17 @@
 ASU Research Computing:
   name_override: 'Arizona State University (RC) - Sol'
 Kent State Research:
+  name_override: 'Kent State University (KS Research)'
 MSU ICER:
-  name_override: Michigan State University (ICER)
+  name_override: 'Michigan State University (ICER) - DataMachine'
 Montana State RCI:
-  name_override: Montana State University (RCI)
+  name_override: 'Montana State University (RCI) - Tempest'
 University of Nevada Reno:
-  name_override: Nevada System (U. Nevada Reno)
+  name_override: 'Nevada System (U. Nevada Reno) - CC'
 ORU - Computing Group:
-  name_override: Oral Roberts University (Titan)
+  name_override: 'Oral Roberts University (Comp. Grp) - Titan'
 Tennessee Tech ITS:
   name_override: 'Tennessee Tech (ITS) - Warp1'
-UAH - CSPAR:
-  name_override: 'U. of Alabama in Huntsville (CSPAR) - Voyager'
 Michigan HORUS:
   name_override: 'University of Michigan–Ann Arbor - HORUS'
 
@@ -30,34 +29,47 @@ Michigan HORUS:
 AMNH:
   name_override: 'American Museum of Natural History'
 Clarkson - ACRES:
+  name_override: 'Clarkson University - ACRES'
 TCNJ - ELSA:
-  name_override: 'College of New Jersey'
+  name_override: 'College of New Jersey - ELSA'
 FANDM-ITS:
   name_override: 'Franklin & Marshall College'
 Georgia Tech:
+  name_override: 'Georgia Institute of Technology'
 Kansas State University:
 LU-CCRE:
   name_override: 'Langston University (LU-CCRE) - Lion'
 Lehigh - Hawk:
 LSU - Deep Bayou:
+  name_override: 'Louisiana State University - Deep Bayou'
 Louisiana State University Health Sciences Center:
 New Mexico State Discovery:
+  name_override: 'New Mexico State University - Discovery'
 PSU LIGO:
 PDX-OIT:
   name_override: 'Portland State University'
 Purdue Geddes:
+  name_override: 'Purdue University - Geddes'
 Rhodes-HPC:
+  name_override: 'Rhodes College'
 Rice-CRC:
 SIUE - CC:
+  name_override: 'Southern Illinois U. Edwardsville - CC'
 SU ITS:
   name_override: Syracuse University
 Tufts - Cluster:
 University of Alabama:
+UAH - CSPAR:
+  name_override: 'U. of Alabama in Huntsville (CSPAR) - Voyager'
 CU - Research Computing:
+  name_override: 'University of Colorado at Boulder (RC)'
 University of Colorado Denver:
 UConn-HPC:
+  name_override: 'University of Connecticut'
 Hawaii ITS:
   name_override: 'University of Hawaii (ITS) - Koa'
+UIUC-NFI:
+  name_override: 'University of Illinois U-C (NFI) - TGI RAILS'
 Maine-ACG:
   name_override: 'University of Maine System'
 UMontana IT:
@@ -67,11 +79,12 @@ ND_CAML:
 Center for Advanced Research Computing:
   name_override: University of Southern California
 UTC - Epyc:
+  name_override: 'University of Tennessee at Chattanooga - Epyc'
 University of Washington Research Computing:
-UWM-Mortimer:
+UW-Milwaukee RC:
   name_override: 'University of Wisconsin–Milwaukee (RC) - Mortimer'
 AUGIE UC:
-  name_override: Villanova University
+  name_override: 'Villanova University - Augie'
 WSU - GRID_ce2:
   name_override: Wayne State University
 
@@ -79,9 +92,10 @@ WSU - GRID_ce2:
 # Others
 # --------------------------------------------------------------
 Clemson-Palmetto:
-  name_override: Clemson University
+  name_override: 'Clemson University - Palmetto'
 FSU_HNPGRID:
   name_override: Florida State University
 North Dakota CRC:
   name_override: University of North Dakota
-University of South Dakota:
+USD - Research Computing Group:
+  name_override: 'University of South Dakota (RC Group) - Lawrence'
