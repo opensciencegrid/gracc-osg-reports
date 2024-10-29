@@ -99,3 +99,5 @@ North Dakota CRC:
   name_override: University of North Dakota
 USD - Research Computing Group:
   name_override: 'University of South Dakota (RC Group) - Lawrence'
+UW-Eau Claire LTS:
+  name_override: 'University of Wisconsin–Eau Claire (LTS) - BOSE'
