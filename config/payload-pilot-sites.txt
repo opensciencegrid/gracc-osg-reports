@@ -6,8 +6,6 @@
 # --------------------------------------------------------------
 # CC* Active
 # --------------------------------------------------------------
-ASU Research Computing:
-  name_override: 'Arizona State University (RC) - Sol'
 Kent State Research:
   name_override: 'Kent State University (KS Research)'
 MSU ICER:
@@ -28,6 +26,8 @@ Michigan HORUS:
 # --------------------------------------------------------------
 AMNH:
   name_override: 'American Museum of Natural History'
+ASU Research Computing:
+  name_override: 'Arizona State University (RC) - Sol'
 Clarkson - ACRES:
   name_override: 'Clarkson University - ACRES'
 TCNJ - ELSA:
