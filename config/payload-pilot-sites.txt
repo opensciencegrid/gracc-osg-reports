@@ -6,6 +6,8 @@
 # --------------------------------------------------------------
 # CC* Active
 # --------------------------------------------------------------
+Duke OIT Systems:
+  name_override: 'Duke University (OIT Systems) - NCShare'
 Kent State Research:
   name_override: 'Kent State University (KS Research)'
 MSU ICER:
@@ -37,6 +39,7 @@ FANDM-ITS:
 Georgia Tech:
   name_override: 'Georgia Institute of Technology'
 Kansas State University:
+  name_override: 'GP-ARGO - Kansas State University'
 LU-CCRE:
   name_override: 'Langston University (LU-CCRE) - Lion'
 Lehigh - Hawk:
@@ -95,6 +98,8 @@ Clemson-Palmetto:
   name_override: 'Clemson University - Palmetto'
 FSU_HNPGRID:
   name_override: Florida State University
+Beocat:
+  name_override: 'Kansas State University - Beocat'
 North Dakota CRC:
   name_override: University of North Dakota
 USD - Research Computing Group:
