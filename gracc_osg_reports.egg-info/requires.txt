@@ -1,0 +1,4 @@
+elasticsearch_dsl
+gracc_reporting
+pandas
+requests
