@@ -38,13 +38,11 @@ def parse_report_args():
 
 
 class PayloadAndPilotHours(ReportUtils.Reporter):
-    """Class to hold the information for and run the OSG Project Report
+    """Class to hold the information for and run the OSG Payloads and Pilots Report
 
-    :param str report_type: OSG, XD. or OSG-Connect
     :param str config_file: Configuration file
     :param str start: Start time for report range
     :param str end: End time for report range
-    :param bool isSum: Show a total line at bottom of report, defaults to True
     """
     def __init__(self, config_file, start, end=None,
                  **kwargs):
@@ -55,10 +53,9 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
                                           start=start,
                                           end=end,
                                           **kwargs)
-        #self.report_type = "MonthlySites"
-        self.title = "OSG Payload and Pilot hours per site {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
+        self.title = "OSG Payload and Pilot hours per resource group {}".format(datetime.datetime.now().strftime("%Y-%m-%d"))
         self.logger.info("Report Type: {0}".format(self.report_type))
-        self.sites = None
+        self.resource_groups = None
         self.overrides = {}
 
     def run_report(self):
@@ -67,7 +64,7 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         self.send_report()
 
 
-    def query(self, record_type="Payload", sites = []):
+    def query(self, record_type="Payload", resource_groups=[]):
         """Method to query Elasticsearch cluster for Payload information
 
         :return elasticsearch_dsl.Search: Search object containing ES query
@@ -79,13 +76,13 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         to_date = datetime.datetime.now()
         s = Search(using=self.client, index=index)
         s = s.filter('range', **{'EndTime': {'from': from_date, 'to': to_date }}) \
-             .filter('terms', OIM_Site=sites)
+             .filter('terms', OIM_ResourceGroup=resource_groups)
         s = s.query('match', ResourceType=record_type)
 
         # Limit to the osg vo.
         s = s.query('match', VOName='osg')
 
-        unique_terms = ["EndTime", "OIM_Site"]
+        unique_terms = ["EndTime", "OIM_ResourceGroup"]
         metrics = ["CoreHours", "Njobs"]
 
         curBucket = s.aggs.bucket(unique_terms[0], 'date_histogram', field=unique_terms[0], interval="day")
@@ -101,35 +98,35 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         return s
 
 
-    def download_sites(self) -> list:
-        """Downloads the list of sites from github raw and parses it
+    def download_resource_groups(self) -> list:
+        """Downloads the list of resource groups from github raw and parses it
 
-        :return list: List of sites
+        :return list: List of resource groups
         """
-        # Download the list of sites from github raw and parse it
-        if self.sites is not None:
-            return self.sites
-        self.sites = []
+        # Download the list of resource groups from github raw and parse it
+        if self.resource_groups is not None:
+            return self.resource_groups
+        self.resource_groups = []
         self.overrides = {}
-        sites_url = self.config[self.report_type.lower()]['sites_url']
-        response = requests.get(sites_url)
+        resource_groups_url = self.config[self.report_type.lower()]['resource_groups_url']
+        response = requests.get(resource_groups_url)
         if response.status_code == 200:
-            # We got the sites config, parse it as yaml
-            sites_config = yaml.safe_load(response.text)
+            # We got the resource groups config, parse it as yaml
+            rg_config = yaml.safe_load(response.text)
 
-            # sites is just a list of the keys
-            self.sites = list(sites_config.keys())
+            # resource_groups is just a list of the keys
+            self.resource_groups = list(rg_config.keys())
 
-            # But, we have to loop through all the sites looking for name_overrides
-            for site in sites_config.keys():
-                if sites_config[site] == None:
+            # But, we have to loop through all the resource groups looking for name_overrides
+            for rg in rg_config.keys():
+                if rg_config[rg] == None:
                     continue
-                if 'name_override' in sites_config[site]:
-                    self.overrides[site] = sites_config[site]['name_override']
+                if 'name_override' in rg_config[rg]:
+                    self.overrides[rg] = rg_config[rg]['name_override']
 
         else:
-            self.logger.error("Unable to download sites from github.  Status code: {}".format(response.status_code))
-        return self.sites
+            self.logger.error("Unable to download resource groups from github.  Status code: {}".format(response.status_code))
+        return self.resource_groups
 
 
     def generate_report_file(self):
@@ -138,12 +135,11 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         
         # These could probably be combined into one query, but I'm not sure how to do that
         # Or these could be farmed out to separate threads or processes
-        sites = self.download_sites()
-        #sites = self.config[self.report_type.lower()]['sites']
-        response_payload = self.query("Payload", sites).execute()
-        response_pilot = self.query("Batch", sites).execute()
+        resource_groups = self.download_resource_groups()
+        response_payload = self.query("Payload", resource_groups).execute()
+        response_pilot = self.query("Batch", resource_groups).execute()
 
-        unique_terms = ["EndTime", "OIM_Site"]
+        unique_terms = ["EndTime", "OIM_ResourceGroup"]
         metrics = ["CoreHours", "Njobs"]
 
         def recurseBucket(curData, curBucket, index, data):
@@ -198,9 +194,6 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
             temp_df = pd.DataFrame(data)
             df_pilot = pd.concat([df_pilot, temp_df], axis=0)
 
-        #df_payload['OIM_Site'] = df_payload['OIM_Site'].map(lambda name: name + " (Payload)")
-        #df_pilot['OIM_Site'] = df_pilot['OIM_Site'].map(lambda name: name + " (Pilot)")
-
         # Add a column for payload or pilot
         df_payload['ResourceType'] = "Payload"
         df_pilot['ResourceType'] = "Batch"
@@ -211,12 +204,12 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         df['EndTime'] = df['EndTime'].dt.date
 
         # Use a pivot table to create a good table with the columns as time
-        hours_table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc='sum')
+        hours_table = pd.pivot_table(df, columns=["EndTime"], values=["CoreHours"], index=["OIM_ResourceGroup", 'ResourceType'], fill_value=0.0, aggfunc='sum')
         hours_table.columns = hours_table.columns.droplevel(0)
         hours_table['Values'] = "Hours"
 
         # And with the number of jobs as well
-        jobs_table = pd.pivot_table(df, columns=["EndTime"], values=["Njobs"], index=["OIM_Site", 'ResourceType'], fill_value=0.0, aggfunc='sum')
+        jobs_table = pd.pivot_table(df, columns=["EndTime"], values=["Njobs"], index=["OIM_ResourceGroup", 'ResourceType'], fill_value=0.0, aggfunc='sum')
         jobs_table.columns = jobs_table.columns.droplevel(0)
         jobs_table['Values'] = "#Jobs"
 
@@ -234,13 +227,13 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
 
         tmp_index_names = table.index.names
 
-        # Check for missing sites, add them if necessary:
-        for site in sites:
+        # Check for missing resource groups, add them if necessary:
+        for rg in resource_groups:
             for resource_type in ["Payload", "Batch"]:
                 for values_type in ["Hours", "#Jobs"]:
-                    if (site, resource_type, values_type) not in table.index:
+                    if (rg, resource_type, values_type) not in table.index:
                         # Append a row to the table
-                        ser = pd.Series(name=(site, resource_type, values_type), data=np.full(table.shape[1], "-"), index=table.columns)
+                        ser = pd.Series(name=(rg, resource_type, values_type), data=np.full(table.shape[1], "-"), index=table.columns)
                         table = pd.concat([table, pd.DataFrame([ser])])
 
         table.index.set_names(tmp_index_names, inplace=True)
@@ -256,26 +249,26 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         table = self.generate_report_file()
         
         # Truncate the decimals in the columns
-        table = table.applymap(lambda x: round(x) if isinstance(x, float) and not pd.isnull(x) else x)
+        table = table.map(lambda x: round(x) if isinstance(x, float) and not pd.isnull(x) else x)
 
-        # Sort the table first by site, then by resource type
+        # Sort the table first by resource group, then by resource type
         # This will put the Batch rows after the Payload rows
         # The first sort is mostly just to order to the resourceType column
-        table.sort_values(by=["OIM_Site", "Values", "ResourceType"], ascending=[True, True, True], inplace=True)
+        table.sort_values(by=["OIM_ResourceGroup", "Values", "ResourceType"], ascending=[True, True, True], inplace=True)
 
-        # Reindex the table to put the sites in the order from the downloaded sites file
-        table = table.reindex(self.download_sites(), level=0)
+        # Reindex the table to put the resource groups in the order from the downloaded config file
+        table = table.reindex(self.download_resource_groups(), level=0)
 
-        # Add a blank row between each site
+        # Add a blank row between each resource group
         # Calculate the total size of the new dataframe, 1 new row for each 2 existing rows
         new_size = len(table) + int(len(table)/4)
 
         # Create a new dataframe with the new size
         table.reset_index(inplace=True)
         new_index = pd.RangeIndex(start=0, stop=new_size, step=1)
-        new_df = pd.DataFrame(np.nan, index=new_index, columns=table.columns)
+        new_df = pd.DataFrame(np.nan, index=new_index, columns=table.columns, dtype=object)
 
-        # A function to perform the following mapping to add a blank line between each site:
+        # A function to perform the following mapping to add a blank line between each resource group:
         # 0 -> 0
         # 1 -> 1
         # 2 -> 2
@@ -302,10 +295,10 @@ class PayloadAndPilotHours(ReportUtils.Reporter):
         results = map(date_to_monthdate, table.columns)
         table.columns = results
 
-        # Set the index to the OIM_Site and ResourceType
-        table.set_index(["OIM_Site", "ResourceType", "Values"], inplace=True)
+        # Set the index to the OIM_ResourceGroup and ResourceType
+        table.set_index(["OIM_ResourceGroup", "ResourceType", "Values"], inplace=True)
 
-        # Convert the sites (first column) using the overrides dictionary
+        # Convert the resource groups (first column) using the overrides dictionary
         table.rename(index=self.overrides, level=0, inplace=True)
 
         # Create the report
@@ -329,7 +322,7 @@ def main():
                         logfile=logfile_fname,
                         template=args.template)
         r.run_report()
-        r.logger.info("OSG Payload and Batch Report executed successfully")
+        r.logger.info("OSG Payload and Pilot Report executed successfully")
 
     except Exception as e:
         ReportUtils.runerror(args.config, e, traceback.format_exc(), args.logfile)

@@ -1,6 +1,6 @@
 # Lines that begin with "#" are ignored.
-# Each line is a OIM_Site from GRACC.  If the site doesn't exist, it will report all 0's
-# For each site, you can optionally add an attribite, name_override, to override the site
+# Each line is an OIM_ResourceGroup from GRACC.  If the resource group doesn't exist, it will report all 0's
+# For each resource group, you can optionally add an attribute, name_override, to override the resource group
 # name in the final report.
 
 # --------------------------------------------------------------
